@@ -53,6 +53,7 @@ namespace cursed
             }
             printf("Successfully loaded '%s'\n", path.c_str());
             maps.push_back( Map( 80, 50, tiles ) );
+            maps[maps.size()-1].addActor(new Actor(20, 25, '!', TCODColor::red ) );
         }
 
         return true;

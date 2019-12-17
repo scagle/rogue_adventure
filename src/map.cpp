@@ -8,10 +8,19 @@ namespace cursed
         construct( width, height, tiles );
     }
 
-    Map::Map( Map const& other )
+    Map::Map( Map const &other )
     {
         construct( other.width, other.height, other.tiles );
     }
+    Map::~Map() 
+    { 
+        delete[] tiles; 
+        for (auto actor : this->actors)
+        {
+            delete actor;
+        }
+    }
+
 
     void Map::construct( int width, int height, Tile *tiles )
     {
@@ -43,6 +52,7 @@ namespace cursed
             {
                 TCODConsole::root->setChar( x, y, tiles[ x + y*width ].code );
                 TCODConsole::root->setCharForeground( x, y, tiles[ x + y*width ].fg );
+                TCODConsole::root->setCharBackground( x, y, tiles[ x + y*width ].bg );
             }
         }
     }

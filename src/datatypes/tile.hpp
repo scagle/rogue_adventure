@@ -1,18 +1,20 @@
 #pragma once 
 
-#include "../enums/tile_type.hpp"
 #include <libtcod/libtcod.hpp>
 
 namespace cursed
 {
+    const TCODColor dirt_wall(128, 80, 60);
+    const TCODColor dirt_floor(60, 40, 10);
+
     struct Tile
     {
         int code;
-        int type;
         bool passable;
         TCODColor fg = TCODColor::white;
+        TCODColor bg = TCODColor::black;
 
-        Tile() : code( '?' ), type( TT_BLANK ), passable( true ) {}
+        Tile() : code( '?' ), passable( true ) {}
 
         Tile( int code )
         {
@@ -22,18 +24,25 @@ namespace cursed
             {
                 case ' ' :
                     passable=true;
+                    fg = dirt_wall;
+                    bg = dirt_floor;
                     break;
                 case '#' :
                     passable=false;
+                    fg = dirt_wall;
+                    bg = dirt_floor;
                     break;
                 default:
                     break;
             }
         }
+
         Tile( const Tile &tile )
         {
             this->code = tile.code;
             this->passable = tile.passable;
+            this->fg = tile.fg;
+            this->bg = tile.bg;
         }
     };
 };

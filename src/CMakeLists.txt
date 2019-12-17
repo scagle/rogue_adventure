@@ -11,6 +11,8 @@ set(BASE_SOURCES
     actor.hpp
     resource_handler.cpp
     resource_handler.hpp
+    engine.cpp
+    engine.hpp
     main.cpp
     map.cpp
     map.hpp
