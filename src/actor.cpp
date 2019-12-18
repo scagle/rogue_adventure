@@ -1,6 +1,7 @@
 #include "actor.hpp"
 
 #include "map.hpp"
+#include "engine.hpp"
 
 #include "datatypes/array2d.hpp"
 
@@ -10,7 +11,7 @@ namespace cursed
 {
     bool Actor::attemptMove( int dx, int dy, Map *map )
     {
-        if ( map->isPassable( this->x + dx, this->y + dy ) )
+        if ( map->isWalkable( this->x + dx, this->y + dy ) )
         {
             move( dx, dy );
             return true;
@@ -24,9 +25,38 @@ namespace cursed
         this->y += y;
     }
 
+    bool Actor::moveOrAttack( int x, int y ) 
+    {
+        Map* map = engine->getMap();
+        if ( map->isWall( x, y ) )
+        {
+            return false;
+        }
+        for ( auto *actor : *engine->getActors() )
+        {
+            if ( actor->x == x && actor->y == y )
+            {
+                printf("%s is unphased!\n", name);
+                return false;
+            }
+        }
+        this->x = x;
+        this->y = y;
+        return true;
+    }
+
     void Actor::render() const
     {
         TCODConsole::root->setChar(x, y, code);
         TCODConsole::root->setCharForeground(x, y, color);
+    }
+
+    void Actor::update() 
+    {
+        Map* map = engine->getMap();
+        if ( map->isInFov( x, y ) )
+        {
+            printf("%s growls at you!\n", name);
+        }
     }
 };

@@ -1,20 +1,26 @@
 #include "map.hpp"
+
+#include "engine.hpp"
+#include "engine.hpp"
+
 #include "datatypes/tile.hpp"
 
 namespace cursed
 {
-    Map::Map( int width, int height, Tile *tiles )
+    Map::Map( Engine *engine, int width, int height, Tile *tiles )
     {
-        construct( width, height, tiles );
+        construct( engine, width, height, tiles );
     }
 
     Map::Map( Map const &other )
     {
-        construct( other.width, other.height, other.tiles );
+        construct( other.engine, other.width, other.height, other.tiles );
     }
+
     Map::~Map() 
     { 
         delete[] tiles; 
+        delete fov_map; 
         for (auto actor : this->actors)
         {
             delete actor;
@@ -22,11 +28,13 @@ namespace cursed
     }
 
 
-    void Map::construct( int width, int height, Tile *tiles )
+    void Map::construct( Engine *engine, int width, int height, Tile *tiles )
     {
+        this->engine = engine;
         this->width = width;
         this->height = height;
         this->tiles = new Tile[width * height];
+        this->fov_map = new TCODMap( width, height );
         if ( tiles != nullptr )
         {
             for ( int x = 0; x < width; x++ )
@@ -34,15 +42,61 @@ namespace cursed
                 for ( int y = 0; y < height; y++ )
                 {
                     this->tiles[ x + y*width ] = *( tiles + ( x + y*width ) );
+                    fov_map->setProperties( 
+                        x, y, 
+                        this->tiles[ x + y*width ].walkable, 
+                        this->tiles[ x + y*width ].transparent 
+                    );
                 }
             }
         }
     }
 
-    bool Map::isPassable( int x, int y ) const
+    bool Map::isWall( int x, int y ) const
     {
-        return tiles[x + y*width].passable;
+        return !fov_map->isWalkable( x, y );
     }
+
+    bool Map::isWalkable( int x, int y ) const
+    {
+        // Check for wall
+        if ( isWall( x, y ) ) 
+        {
+            return false;
+        }
+
+        // Check for actor collision
+        for ( auto *actor : actors )
+        {
+            if ( actor->x == x && actor->y == y ) 
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool Map::isInFov( int x, int y ) const
+    {
+        if ( fov_map->isInFov( x, y ) )
+        {
+            tiles[x + y*width].explored = true;
+            return true;
+        }
+        return false;
+    }
+
+    bool Map::isExplored( int x, int y ) const
+    {
+        return ( tiles[x +  y*width].explored );
+    }
+
+    void Map::computeFov( Actor& observer, int fov_radius )
+    {
+        fov_map->computeFov( observer.x, observer.y, fov_radius );
+    }
+
 
     void Map::render() const
     {
@@ -51,8 +105,16 @@ namespace cursed
             for ( int y = 0; y < height; y++ )
             {
                 TCODConsole::root->setChar( x, y, tiles[ x + y*width ].code );
-                TCODConsole::root->setCharForeground( x, y, tiles[ x + y*width ].fg );
-                TCODConsole::root->setCharBackground( x, y, tiles[ x + y*width ].bg );
+                if ( isInFov( x, y ) )
+                {
+                    TCODConsole::root->setCharForeground( x, y, tiles[ x + y*width ].fg );
+                    TCODConsole::root->setCharBackground( x, y, tiles[ x + y*width ].bg );
+                } 
+                else
+                {
+                    TCODConsole::root->setCharForeground( x, y, TCODColor::grey );
+                    TCODConsole::root->setCharBackground( x, y, TCODColor::black );
+                } 
             }
         }
     }

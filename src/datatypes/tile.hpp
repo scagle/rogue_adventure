@@ -10,25 +10,38 @@ namespace cursed
     struct Tile
     {
         int code;
-        bool passable;
+        bool walkable;
+        bool transparent;
+        bool explored;
         TCODColor fg = TCODColor::white;
         TCODColor bg = TCODColor::black;
 
-        Tile() : code( '?' ), passable( true ) {}
+        void construct( int code='?', 
+                        bool walkable=true, 
+                        bool transparent=true,
+                        bool explored=false )
+        {
+            this->code = code;    
+            this->transparent = transparent;    
+            this->walkable = walkable;    
+            this->explored = explored;    
+        }
 
+        Tile(){ construct(); }
         Tile( int code )
         {
-            this->code = code;
-            this->passable = true; // Default
+            construct( code=code );
             switch ( code )
             {
                 case ' ' :
-                    passable=true;
+                    walkable=true;
+                    transparent=true;
                     fg = dirt_wall;
                     bg = dirt_floor;
                     break;
                 case '#' :
-                    passable=false;
+                    walkable=false;
+                    transparent=false;
                     fg = dirt_wall;
                     bg = dirt_floor;
                     break;
@@ -40,7 +53,8 @@ namespace cursed
         Tile( const Tile &tile )
         {
             this->code = tile.code;
-            this->passable = tile.passable;
+            this->walkable = tile.walkable;
+            this->transparent = tile.transparent;
             this->fg = tile.fg;
             this->bg = tile.bg;
         }

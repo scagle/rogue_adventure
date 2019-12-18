@@ -1,5 +1,8 @@
 #include "resource_handler.hpp"
 
+#include "datatypes/tile.hpp"
+#include "engine.hpp"
+
 #include <fstream>
 #include <sstream>
 #include <glob.h>
@@ -52,8 +55,17 @@ namespace cursed
                 y++;
             }
             printf("Successfully loaded '%s'\n", path.c_str());
-            maps.push_back( Map( 80, 50, tiles ) );
-            maps[maps.size()-1].addActor(new Actor(20, 25, '!', TCODColor::red ) );
+            maps.push_back( Map( Engine::getEngine(), 80, 50, tiles ) );
+
+            // Add random actors to map
+            TCODRandom *rng = TCODRandom::getInstance();
+            for ( int i = 0; i < rng->getInt(0, 10); i++ )
+                maps[maps.size()-1].addActor(new Actor( 
+                        Engine::getEngine(), 
+                        rng->getInt(0, 79), rng->getInt(0, 49), 
+                        '!', "dude", TCODColor::red 
+                    ) 
+                );
         }
 
         return true;
