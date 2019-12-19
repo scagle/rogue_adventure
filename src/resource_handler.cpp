@@ -57,7 +57,7 @@ namespace cursed
             printf("Successfully loaded '%s'\n", path.c_str());
             maps.push_back( Map( Engine::getEngine(), 80, 50, tiles ) );
 
-            // Add random actors to map
+            // Add aggressive trolls to map
             TCODRandom *rng = TCODRandom::getInstance();
             for ( int i = 0; i < rng->getInt(5, 10); i++ )
             {
@@ -65,8 +65,21 @@ namespace cursed
                     rng->getInt(0, 79), rng->getInt(0, 49), 
                     'O', "troll", TCODColor::desaturatedGreen
                 );
-                actor->destructible = new MonsterDestructible(16, 1, true, "troll carcass");
-                actor->attacker = new Attacker(4);
+                actor->destructible = new MonsterDestructible( 16, 1, true, "troll's carcass" );
+                actor->attacker = new Attacker( rng->getInt( 1, 4 ) );
+                actor->ai = new MonsterAI();
+                maps[maps.size()-1].addActor( actor );
+            }
+
+            // Add friendly npcs to map
+            for ( int i = 0; i < rng->getInt(5, 10); i++ )
+            {
+                Actor *actor = new Actor( Engine::getEngine(), 
+                    rng->getInt(0, 79), rng->getInt(0, 49), 
+                    'O', "friendly dude", TCODColor::yellow
+                );
+                actor->destructible = new MonsterDestructible(16, 1, true, "dude's carcass");
+                actor->attacker = nullptr;
                 actor->ai = new MonsterAI();
                 maps[maps.size()-1].addActor( actor );
             }

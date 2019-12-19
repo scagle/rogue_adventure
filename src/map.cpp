@@ -68,7 +68,8 @@ namespace cursed
         // Check for actor collision
         for ( auto *actor : actors )
         {
-            if ( actor->x == x && actor->y == y ) 
+            if ( ( actor->x == x && actor->y == y ) &&
+                 ( actor->blocks ) )
             {
                 return false;
             }

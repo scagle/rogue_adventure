@@ -9,6 +9,9 @@
 namespace cursed
 {
     // Static Declaration
+    
+    // How many turns it will track after losing sight
+    const int MONSTER_TRACKING_TURNS = 3; 
 
     // Constructors
     AI::AI()
@@ -97,6 +100,14 @@ namespace cursed
         // Check to see if monster is in field of view of player
         if ( engine->getMap()->isInFov( owner->x, owner->y ) )
         {
+            move_count = MONSTER_TRACKING_TURNS;
+        } 
+        else 
+        { 
+            move_count--;
+        }
+        if ( move_count > 0 )
+        {
             moveOrAttack( owner, engine->getPlayer()->x, engine->getPlayer()->y );
         }
     }
@@ -107,6 +118,8 @@ namespace cursed
         Map *map = engine->getMap();
         int dx = target_x - owner->x;
         int dy = target_y - owner->y;
+        int step_dx = (dx > 0) ? 1 : -1;
+        int step_dy = (dy > 0) ? 1 : -1;
         float distance = sqrtf(dx*dx + dy*dy);
 
         if ( distance >= 2 )
@@ -118,6 +131,14 @@ namespace cursed
                 owner->x += dx;
                 owner->y += dy;
                 return true;
+            }
+            else if ( map->isWalkable( owner->x + step_dx, owner->y ) )
+            {
+                owner->x += step_dx;
+            }
+            else if ( map->isWalkable( owner->x, owner->y + step_dy) )
+            {
+                owner->y += step_dy;
             }
         } 
         else if ( owner->attacker )
