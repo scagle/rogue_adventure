@@ -7,6 +7,12 @@ namespace cursed
     const TCODColor dirt_wall(128, 80, 60);
     const TCODColor dirt_floor(60, 40, 10);
 
+    enum ColorType
+    {
+        FG,
+        BG
+    };
+
     struct Tile
     {
         int code;
@@ -57,6 +63,20 @@ namespace cursed
             this->transparent = tile.transparent;
             this->fg = tile.fg;
             this->bg = tile.bg;
+        }
+
+        TCODColor getOffsetColor( ColorType type, float offset )
+        {
+            switch ( type )
+            {
+                case FG:
+                    return fg * offset;
+                case BG:
+                    return bg * offset;
+                default:
+                    printf("*** WARNING: Invalid color type, returning black (tile.hpp)\n");
+                    return TCODColor::black;
+            }
         }
     };
 };

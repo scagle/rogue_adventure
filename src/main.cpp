@@ -2,7 +2,7 @@
 
 #include <libtcod/libtcod.hpp>
 
-cursed::Engine engine;
+cursed::Engine engine(100, 50);
 
 int main() 
 {

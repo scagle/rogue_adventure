@@ -59,13 +59,17 @@ namespace cursed
 
             // Add random actors to map
             TCODRandom *rng = TCODRandom::getInstance();
-            for ( int i = 0; i < rng->getInt(0, 10); i++ )
-                maps[maps.size()-1].addActor(new Actor( 
-                        Engine::getEngine(), 
-                        rng->getInt(0, 79), rng->getInt(0, 49), 
-                        '!', "dude", TCODColor::red 
-                    ) 
+            for ( int i = 0; i < rng->getInt(5, 10); i++ )
+            {
+                Actor *actor = new Actor( Engine::getEngine(), 
+                    rng->getInt(0, 79), rng->getInt(0, 49), 
+                    'O', "troll", TCODColor::desaturatedGreen
                 );
+                actor->destructible = new MonsterDestructible(16, 1, true, "troll carcass");
+                actor->attacker = new Attacker(4);
+                actor->ai = new MonsterAI();
+                maps[maps.size()-1].addActor( actor );
+            }
         }
 
         return true;

@@ -36,7 +36,7 @@ namespace cursed
         {
             if ( actor->x == x && actor->y == y )
             {
-                printf("%s is unphased!\n", name);
+                printf("%s is unphased!\n", actor->name.c_str());
                 return false;
             }
         }
@@ -53,10 +53,14 @@ namespace cursed
 
     void Actor::update() 
     {
-        Map* map = engine->getMap();
-        if ( map->isInFov( x, y ) )
+        if ( ai )
         {
-            printf("%s growls at you!\n", name);
+            ai->update( this );
         }
+        //Map* map = engine->getMap();
+        //if ( map->isInFov( x, y ) )
+        //{
+        //    printf("%s growls at you!\n", name.c_str());
+        //}
     }
 };

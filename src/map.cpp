@@ -92,9 +92,9 @@ namespace cursed
         return ( tiles[x +  y*width].explored );
     }
 
-    void Map::computeFov( Actor& observer, int fov_radius )
+    void Map::computeFov( Actor* observer, int fov_radius )
     {
-        fov_map->computeFov( observer.x, observer.y, fov_radius );
+        fov_map->computeFov( observer->x, observer->y, fov_radius );
     }
 
 
@@ -104,16 +104,26 @@ namespace cursed
         {
             for ( int y = 0; y < height; y++ )
             {
-                TCODConsole::root->setChar( x, y, tiles[ x + y*width ].code );
+                Tile *tile = &( tiles[x + y*width] );
+                TCODConsole::root->setChar( x, y, tile->code );
                 if ( isInFov( x, y ) )
                 {
-                    TCODConsole::root->setCharForeground( x, y, tiles[ x + y*width ].fg );
-                    TCODConsole::root->setCharBackground( x, y, tiles[ x + y*width ].bg );
+                    TCODConsole::root->setCharForeground( x, y, tile->fg );
+                    TCODConsole::root->setCharBackground( x, y, tile->bg );
                 } 
                 else
                 {
-                    TCODConsole::root->setCharForeground( x, y, TCODColor::grey );
-                    TCODConsole::root->setCharBackground( x, y, TCODColor::black );
+                    // Check if tile has been explored yet
+                    if ( tiles[x + y*width].explored )
+                    {
+                        TCODConsole::root->setCharForeground( x, y, tile->getOffsetColor( FG, 0.5 ) );
+                        TCODConsole::root->setCharBackground( x, y, tile->getOffsetColor( BG, 0.5 ) );
+                    }
+                    else
+                    {
+                        TCODConsole::root->setCharForeground( x, y, TCODColor::black );
+                        TCODConsole::root->setCharBackground( x, y, TCODColor::black );
+                    }
                 } 
             }
         }
