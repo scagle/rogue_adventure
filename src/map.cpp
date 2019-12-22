@@ -27,7 +27,6 @@ namespace cursed
         }
     }
 
-
     void Map::construct( Engine *engine, int width, int height, Tile *tiles )
     {
         this->engine = engine;

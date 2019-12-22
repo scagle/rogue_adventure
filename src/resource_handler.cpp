@@ -78,7 +78,7 @@ namespace cursed
                     rng->getInt(0, 79), rng->getInt(0, 49), 
                     'O', "friendly dude", TCODColor::yellow
                 );
-                actor->destructible = new MonsterDestructible(16, 1, true, "dude's carcass");
+                actor->destructible = new MonsterDestructible(16, 0, true, "dude's carcass");
                 actor->attacker = nullptr;
                 actor->ai = new MonsterAI();
                 maps[maps.size()-1].addActor( actor );

@@ -61,14 +61,14 @@ namespace cursed
     void MonsterDestructible::die( Actor *owner )
     {
         // Spawn corpse
-        printf("%s is dead!\n", owner->name.c_str());
+        Engine::getConsole()->message(TCODColor::red, "%s is dead!\n", owner->name.c_str());
         Destructible::die( owner );
     }
 
     void PlayerDestructible::die( Actor *owner )
     {
         // Spawn corpse
-        printf("You died!\n", owner->name.c_str());
+        Engine::getConsole()->message(TCODColor::red, "You died!\n", owner->name.c_str());
         Destructible::die( owner );
         Engine::setState( DEFEAT );
     }

@@ -1,3 +1,6 @@
+# Fmt PrintF like formatter 
+find_package(fmt REQUIRED)
+
 # Libtcod
 find_package(Libtcod REQUIRED)
 
@@ -13,6 +16,7 @@ set(BASE_SOURCES
     resource_handler.hpp
     engine.cpp
     engine.hpp
+    options.hpp
     main.cpp
     map.cpp
     map.hpp
@@ -21,13 +25,15 @@ set(BASE_SOURCES
 add_subdirectory(datatypes)
 add_subdirectory(enums)
 add_subdirectory(behaviors) # Actor behaviors
+add_subdirectory(gui) # Actor behaviors
 
-add_executable(cursed ${BASE_SOURCES} ${DATATYPES_SOURCES} ${ENUMS_SOURCES} ${BEHAVIORS_SOURCES} ${INCLUDE_SOURCES})
+add_executable(cursed ${BASE_SOURCES} ${DATATYPES_SOURCES} ${ENUMS_SOURCES} ${BEHAVIORS_SOURCES} ${GUI_SOURCES} ${INCLUDE_SOURCES})
 
 target_include_directories(cursed PUBLIC ${LIBTCOD_INCLUDE_DIRS})
 
-target_link_libraries(cursed Threads::Threads)
+target_link_libraries(cursed fmt::fmt)
 target_link_libraries(cursed ${LIBTCOD_LIBRARIES})
+target_link_libraries(cursed Threads::Threads)
 
 
 message("Copying binary to <project>/build")

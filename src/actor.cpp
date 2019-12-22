@@ -36,7 +36,8 @@ namespace cursed
         {
             if ( actor->x == x && actor->y == y )
             {
-                printf("%s is unphased!\n", actor->name.c_str());
+                Engine::getConsole()->message( TCODColor::lightRed, "%s is unphased!\n", 
+                    actor->name.c_str() );
                 return false;
             }
         }
@@ -60,7 +61,7 @@ namespace cursed
         //Map* map = engine->getMap();
         //if ( map->isInFov( x, y ) )
         //{
-        //    printf("%s growls at you!\n", name.c_str());
+        //    Engine::getConsole()->message("%s growls at you!\n", name.c_str());
         //}
     }
 };

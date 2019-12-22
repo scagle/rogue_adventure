@@ -15,19 +15,23 @@ namespace cursed
     extern Engine engine;
 
     // Static Declaration
+    int Engine::screen_width;
+    int Engine::screen_height;
     ResourceHandler Engine::resource_handler;
     std::vector< Actor* > Engine::current_actors;        
-    Map* Engine::current_map;        
+    Map *Engine::current_map;        
     Actor Engine::player;
     int Engine::map_visibility;
-    Engine* Engine::active_engine = nullptr;
+    Engine *Engine::active_engine = nullptr;
     GameStatus Engine::game_state;
     TCOD_key_t Engine::current_key;
+    std::shared_ptr< Console > Engine::console;
 
     // Constructors
     Engine::Engine( int screen_width, int screen_height )
-        : screen_width( screen_width ), screen_height( screen_height )
     {
+        this->screen_width = screen_width;
+        this->screen_height = screen_height;
         this->active_engine = this;
         this->game_state = STARTUP;
         this->map_visibility = 12;
@@ -41,13 +45,19 @@ namespace cursed
 
         resource_handler.loadResources();
         current_map = resource_handler.getMap(0);
+        console = std::make_shared< Console >( screen_width, 8 );
         getAllActors( current_map );
+    }
+
+    Engine::~Engine()
+    {
     }
 
     // Methods
     void Engine::sendToBack( Actor *actor )
     {
-        current_actors.erase( std::remove( current_actors.begin(), current_actors.end(), actor ), current_actors.end() );
+        current_actors.erase( std::remove( current_actors.begin(), current_actors.end(), actor ), 
+            current_actors.end() );
         current_actors.insert( current_actors.begin(), actor );
     }
 
@@ -59,7 +69,7 @@ namespace cursed
         }
 
         game_state = IDLE;
-        TCODSystem::checkForEvent(TCOD_EVENT_KEY_PRESS, &current_key, NULL);
+        TCODSystem::checkForEvent( TCOD_EVENT_KEY_PRESS, &current_key, NULL );
 
         // Update Player
         player.update();
@@ -92,11 +102,11 @@ namespace cursed
             }
         }
 
+        // Render the player
         player.render();
-        // Show player health points
-        TCODConsole::root->printf(1, screen_height-2, "HP : %d/%d", 
-            (int)player.destructible->hp, (int)player.destructible->max_hp
-        );
+
+        // Show log and stats
+        console->render();
 
     }
 

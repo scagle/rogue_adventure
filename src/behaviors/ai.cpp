@@ -2,6 +2,7 @@
 
 #include "../actor.hpp"
 #include "../engine.hpp"
+#include "../options.hpp"
 
 #include <libtcod/libtcod.hpp>
 #include <math.h>
@@ -31,21 +32,23 @@ namespace cursed
         // Update Player
         int dx = 0;
         int dy = 0;
-        switch ( Engine::getCurrentKey()->vk )
+        char key = Engine::getCurrentKey()->c;
+        Options &options = Options::getOptions();
+        if ( key == options.UP )
         {
-            case TCODK_UP: 
-                dx = 0; dy = -1;
-                break;
-            case TCODK_RIGHT: 
-                dx = 1; dy = 0;
-                break;
-            case TCODK_LEFT: 
-                dx = -1; dy = 0;
-                break;
-            case TCODK_DOWN: 
-                dx = 0; dy = 1;
-                break;
-            default: break;
+            dx = 0; dy = -1;
+        }
+        else if ( key == options.DOWN )
+        {
+            dx = 0; dy = 1;
+        }
+        else if ( key == options.LEFT )
+        {
+            dx = -1; dy = 0;
+        }
+        else if ( key == options.RIGHT )
+        {
+            dx = 1; dy = 0;
         }
 
         // Update Player
@@ -81,7 +84,8 @@ namespace cursed
             else if ( ( actor->destructible ) && ( actor->destructible->isDead() ) &&
                       ( actor->x == target_x ) && ( actor->y == target_y ) )
             {
-                printf("Theres a %s here!\n", actor->name.c_str()); 
+                Engine::getConsole()->message(TCODColor::yellow, "Theres a %s here!\n", 
+                    actor->name.c_str()); 
             }
         }
         owner->x = target_x;
@@ -136,7 +140,7 @@ namespace cursed
             {
                 owner->x += step_dx;
             }
-            else if ( map->isWalkable( owner->x, owner->y + step_dy) )
+            else if ( map->isWalkable( owner->x, owner->y + step_dy ) )
             {
                 owner->y += step_dy;
             }
