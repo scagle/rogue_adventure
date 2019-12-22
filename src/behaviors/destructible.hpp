@@ -21,22 +21,27 @@ namespace cursed
         Destructible( float max_hp, float defense, bool corpse_visible, std::string corpse_name ); 
         virtual ~Destructible() { }
 
-        inline bool isDead() { return hp <= 0; }
         float takeDamage( Actor *owner, float damage );
+        float heal( float amount );
         virtual void die( Actor *owner );
+
+        inline bool isDead() { return hp <= 0; }
+
     };
 
     class MonsterDestructible : public Destructible
     {
         public:
-        MonsterDestructible( float max_hp, float defense, bool corpse_visible, std::string corpse_name );
+        MonsterDestructible( float max_hp, float defense, bool corpse_visible, 
+            std::string corpse_name );
         void die( Actor *owner );
     };
 
     class PlayerDestructible : public Destructible
     {
         public:
-        PlayerDestructible( float max_hp, float defense, bool corpse_visible, std::string corpse_name );
+        PlayerDestructible( float max_hp, float defense, bool corpse_visible, 
+            std::string corpse_name );
         void die( Actor *owner );
     };
 };

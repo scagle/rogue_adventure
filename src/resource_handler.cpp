@@ -65,9 +65,10 @@ namespace cursed
                     rng->getInt(0, 79), rng->getInt(0, 49), 
                     'O', "troll", TCODColor::desaturatedGreen
                 );
-                actor->destructible = new MonsterDestructible( 16, 1, true, "troll's carcass" );
-                actor->attacker = new Attacker( rng->getInt( 1, 4 ) );
-                actor->ai = new MonsterAI();
+                actor->destructible = std::make_shared< Destructible >( 16, 1, true, 
+                    "troll's carcass" );
+                actor->attacker = std::make_shared< Attacker >( rng->getInt( 1, 4 ) );
+                actor->ai = std::make_shared< MonsterAI >();
                 maps[maps.size()-1].addActor( actor );
             }
 
@@ -78,9 +79,10 @@ namespace cursed
                     rng->getInt(0, 79), rng->getInt(0, 49), 
                     'O', "friendly dude", TCODColor::yellow
                 );
-                actor->destructible = new MonsterDestructible(16, 0, true, "dude's carcass");
+                actor->destructible = std::make_shared< MonsterDestructible >( 16, 0, true, 
+                    "dude's carcass" );
                 actor->attacker = nullptr;
-                actor->ai = new MonsterAI();
+                actor->ai = std::make_shared< MonsterAI >();
                 maps[maps.size()-1].addActor( actor );
             }
         }

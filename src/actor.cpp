@@ -58,10 +58,5 @@ namespace cursed
         {
             ai->update( this );
         }
-        //Map* map = engine->getMap();
-        //if ( map->isInFov( x, y ) )
-        //{
-        //    Engine::getConsole()->message("%s growls at you!\n", name.c_str());
-        //}
     }
 };

@@ -25,6 +25,7 @@ namespace cursed
     Engine *Engine::active_engine = nullptr;
     GameStatus Engine::game_state;
     TCOD_key_t Engine::current_key;
+    TCOD_mouse_t Engine::current_mouse;
     std::shared_ptr< Console > Engine::console;
 
     // Constructors
@@ -39,9 +40,9 @@ namespace cursed
 
         // Character Creation
         player = Actor( this, 40, 25, '@', "player", TCODColor::white );
-        player.destructible = new PlayerDestructible( 30, 2, true, "your cadaver");
-        player.attacker = new Attacker( 5 );
-        player.ai = new PlayerAI();
+        player.destructible = std::make_shared< PlayerDestructible >( 30, 2, true, "your cadaver");
+        player.attacker = std::make_shared< Attacker >( 5 );
+        player.ai = std::make_shared< PlayerAI >();
 
         resource_handler.loadResources();
         current_map = resource_handler.getMap(0);
@@ -51,6 +52,7 @@ namespace cursed
 
     Engine::~Engine()
     {
+
     }
 
     // Methods
@@ -69,7 +71,8 @@ namespace cursed
         }
 
         game_state = IDLE;
-        TCODSystem::checkForEvent( TCOD_EVENT_KEY_PRESS, &current_key, NULL );
+        TCODSystem::checkForEvent( TCOD_EVENT_KEY_PRESS|TCOD_EVENT_MOUSE, 
+            &current_key, &current_mouse );
 
         // Update Player
         player.update();

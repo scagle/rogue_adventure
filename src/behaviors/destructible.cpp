@@ -48,6 +48,17 @@ namespace cursed
         return damage;
     }
 
+    float Destructible::heal( float amount )
+    {
+        hp += amount;
+        if ( hp > max_hp )
+        {
+            amount -= hp - max_hp;
+            hp = max_hp;
+        }
+        return amount;
+    }
+
     void Destructible::die( Actor *owner )
     {
         // Generate a corpse

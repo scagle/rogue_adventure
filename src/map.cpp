@@ -79,6 +79,11 @@ namespace cursed
 
     bool Map::isInFov( int x, int y ) const
     {
+        // Check for out of boundaries ( possible with mouse look )
+        if ( x < 0 || x >= width || y < 0 || y >= height )
+        {
+            return false;
+        }
         if ( fov_map->isInFov( x, y ) )
         {
             tiles[x + y*width].explored = true;
@@ -116,8 +121,10 @@ namespace cursed
                     // Check if tile has been explored yet
                     if ( tiles[x + y*width].explored )
                     {
-                        TCODConsole::root->setCharForeground( x, y, tile->getOffsetColor( FG, 0.5 ) );
-                        TCODConsole::root->setCharBackground( x, y, tile->getOffsetColor( BG, 0.5 ) );
+                        TCODConsole::root->setCharForeground( x, y, 
+                            tile->getOffsetColor( FG, 0.5 ) );
+                        TCODConsole::root->setCharBackground( x, y, 
+                            tile->getOffsetColor( BG, 0.5 ) );
                     }
                     else
                     {

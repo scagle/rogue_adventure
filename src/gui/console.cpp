@@ -29,18 +29,22 @@ namespace cursed
         renderBar( 1, 0, width-2, "HP", Engine::getPlayer()->destructible->hp, 
             Engine::getPlayer()->destructible->max_hp, TCODColor::lightRed, TCODColor::darkerRed ); 
 
+        // Mouse look
+        renderMouseLook();
+
         // Draw the messages
         int y_offset = 1;
         for ( int i = log.size() - 1; i >= 0; i-- )
         {
             console->setDefaultForeground( log[i].color );
-            console->print( width / 2, y_offset, log[i].text.c_str(), TCOD_BKGND_NONE, TCOD_CENTER );
+            console->printf( 0, y_offset, log[i].text.c_str(), TCOD_BKGND_NONE, TCOD_CENTER );
 
             // Check to see if its old
             if ( y_offset == 7)
                 break;
             y_offset++;
         }
+
 
         // blit the GUI console to the root console
         TCODConsole::blit( console.get(), 0, 0, width, height, TCODConsole::root, 0, 
@@ -85,8 +89,9 @@ namespace cursed
 
     void Console::renderBar( int x, int y, int width, std::string name, 
         float value, float max_value, const TCODColor &bar_color,
-        const TCODColor &back_color )
+        const TCODColor &back_color ) 
     {
+    
         // fill the background
         console->setDefaultBackground( back_color );
         console->rect( x, y, BAR_WIDTH, 1, false, TCOD_BKGND_SET );
@@ -104,5 +109,37 @@ namespace cursed
                 name.c_str(), value, max_value );
 
         }
+    }
+
+    void Console::renderMouseLook()
+    {
+        auto *mouse = Engine::getCurrentMouse();
+        if ( ! Engine::getMap()->isInFov( mouse->cx, mouse->cy ) )
+        {
+            // If mouse is out of fov nothing to render
+            return;
+        }
+
+        char buf[256] = "";
+        bool first = true;
+        for ( Actor *actor : *Engine::getActors() )
+        {
+            if ( actor->x == mouse->cx && actor->y == mouse->cy )
+            {
+                if ( ! first ) 
+                {
+                    strcat( buf, ", " );
+                }
+                else
+                {
+                    first=false;
+                }
+                strcat( buf, actor->name.c_str() );
+            }
+        }
+
+        // display the list of actors under mouse cursor
+        console->setDefaultForeground(TCODColor::lightGrey);
+        console->printf( width/2, 0, buf, TCOD_CENTER );
     }
 };

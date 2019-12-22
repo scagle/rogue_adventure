@@ -14,6 +14,8 @@ namespace cursed
 #include "behaviors/ai.hpp"
 #include "behaviors/attacker.hpp"
 #include "behaviors/destructible.hpp"
+#include "behaviors/pickable.hpp"
+#include "behaviors/container.hpp"
 
 #include <string>
 #include <libtcod/libtcod.hpp>
@@ -32,9 +34,13 @@ namespace cursed
         std::string name = "Unknown"; 
         TCODColor color = TCODColor::white; 
         bool blocks = true; // Whether character blocks other actor movements
-        Destructible *destructible = nullptr;
-        Attacker *attacker = nullptr;
-        AI *ai = nullptr;
+
+        // Composite Elements
+        std::shared_ptr< Destructible > destructible;
+        std::shared_ptr< Attacker     > attacker;
+        std::shared_ptr< AI           > ai;
+        std::shared_ptr< Pickable     > pickable;
+        std::shared_ptr< Container    > container;
 
         Actor() : x( 0 ), y( 0 ) {}
         Actor( Engine *engine, int x, int y, int code, std::string name, const TCODColor &color ) :

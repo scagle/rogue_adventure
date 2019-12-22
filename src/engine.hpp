@@ -25,6 +25,7 @@ namespace cursed
         static int map_visibility;
         static GameStatus game_state;
         static TCOD_key_t current_key;
+        static TCOD_mouse_t current_mouse;
         static std::shared_ptr< Console > console;
 
         public:
@@ -39,6 +40,7 @@ namespace cursed
         static std::vector< Actor* >* getActors() { return &(current_actors); }
         static int getVisibility() { return map_visibility; }
         static TCOD_key_t* getCurrentKey() { return &(current_key); }
+        static TCOD_mouse_t* getCurrentMouse() { return &(current_mouse); }
         static GameStatus getState() { return game_state; }
         static std::shared_ptr< Console > getConsole() { return console; }
 
