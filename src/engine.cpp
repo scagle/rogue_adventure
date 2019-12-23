@@ -18,15 +18,17 @@ namespace cursed
     int Engine::screen_width;
     int Engine::screen_height;
     ResourceHandler Engine::resource_handler;
-    std::vector< Actor* > Engine::current_actors;        
+    std::vector< Actor* > Engine::current_actors;       // all npcs
+    std::vector< Actor* > Engine::all_current_actors;   // all npcs + player                                                    
+    std::vector< Actor* > Engine::current_items;        // all items
     Map *Engine::current_map;        
-    Actor Engine::player;
     int Engine::map_visibility;
     Engine *Engine::active_engine = nullptr;
     GameStatus Engine::game_state;
     TCOD_key_t Engine::current_key;
     TCOD_mouse_t Engine::current_mouse;
-    std::shared_ptr< Console > Engine::console;
+    std::unique_ptr< Console > Engine::console;
+    std::unique_ptr< Actor > Engine::player;
 
     // Constructors
     Engine::Engine( int screen_width, int screen_height )
@@ -36,18 +38,23 @@ namespace cursed
         this->active_engine = this;
         this->game_state = STARTUP;
         this->map_visibility = 12;
-        TCODConsole::initRoot(screen_width, screen_height, "Cursed Adventure", false);
+
+        TCODConsole::initRoot( screen_width, screen_height, "Cursed Adventure", false );
+        console = std::make_unique< Console >( screen_width, 8 );
 
         // Character Creation
-        player = Actor( this, 40, 25, '@', "player", TCODColor::white );
-        player.destructible = std::make_shared< PlayerDestructible >( 30, 2, true, "your cadaver");
-        player.attacker = std::make_shared< Attacker >( 5 );
-        player.ai = std::make_shared< PlayerAI >();
+        player = std::make_unique< Actor >( this, 40, 25, '@', "player", TCODColor::white );
+        player->destructible = std::make_unique< PlayerDestructible >( 30, 2, 
+            true, "your cadaver" );
+        player->attacker = std::make_unique< Attacker >( 5 );
+        player->ai = std::make_unique< PlayerAI >();
+        player->pickable = nullptr;
+        player->container = std::make_unique< Container >( 26 );
 
-        resource_handler.loadResources();
-        current_map = resource_handler.getMap(0);
-        console = std::make_shared< Console >( screen_width, 8 );
-        getAllActors( current_map );
+        // Resource management
+        resource_handler.loadResources();         // initialize ResourceHandler
+        current_map = resource_handler.getMap(0); // load map 0
+        this->setActors( current_map );           // load actors
     }
 
     Engine::~Engine()
@@ -56,18 +63,18 @@ namespace cursed
     }
 
     // Methods
-    void Engine::sendToBack( Actor *actor )
+    void Engine::sendToBack( Actor &actor )
     {
-        current_actors.erase( std::remove( current_actors.begin(), current_actors.end(), actor ), 
+        current_actors.erase( std::remove( current_actors.begin(), current_actors.end(), &actor ), 
             current_actors.end() );
-        current_actors.insert( current_actors.begin(), actor );
+        current_actors.insert( current_actors.begin(), &actor );
     }
 
     void Engine::update()
     {
         if ( game_state == STARTUP )
         {
-            current_map->computeFov( &(player), map_visibility );
+            current_map->computeFov( *player, map_visibility );
         }
 
         game_state = IDLE;
@@ -75,14 +82,14 @@ namespace cursed
             &current_key, &current_mouse );
 
         // Update Player
-        player.update();
+        player->update();
 
         // Update NPCs
         if ( game_state == NEW_TURN )
         {
-            for ( auto *actor : current_actors )
+            for ( auto&& actor : current_actors )
             {
-                if ( actor != &player )    
+                if ( actor != player.get() )    
                 {
                     actor->update();
                 }
@@ -97,7 +104,15 @@ namespace cursed
         // Rendering
         current_map->render();
 
-        for ( auto *actor : current_actors )
+        for ( auto&& actor : current_items )
+        {
+            if ( current_map->isInFov( actor->x, actor->y ) )
+            {
+                actor->render();
+            }
+        }
+
+        for ( auto&& actor : current_actors )
         {
             if ( current_map->isInFov( actor->x, actor->y ) )
             {
@@ -106,18 +121,39 @@ namespace cursed
         }
 
         // Render the player
-        player.render();
+        player->render();
 
         // Show log and stats
         console->render();
 
     }
 
-    void Engine::getAllActors( Map *map )
+    void Engine::setActors( Map *map )
     {
-        std::vector< Actor* > *actors = current_map->getActors();
-        current_actors = *actors; // Copy Actors
-        current_actors.push_back( &player ); // Add player to list of actors
+        // 1. Get NPCs
+        std::vector< std::unique_ptr< Actor > > &actors = current_map->getActors();
+        current_actors.clear();
+
+        // Copy and add actors to list
+        for ( auto&& actor : actors )
+            current_actors.push_back( actor.get() );
+
+
+        // 2. Get Items
+        std::vector< std::unique_ptr< Actor > > &items = current_map->getItems();
+        current_items.clear();
+
+        // Copy and add items to list
+        for ( auto&& item : items )
+            current_items.push_back( item.get() );
+
+        // 3. Get All Actors, including the main player
+        all_current_actors.clear();
+        all_current_actors.insert( all_current_actors.end(),  // Concatenate npcs
+            current_actors.begin(), current_actors.end() );
+        all_current_actors.insert( all_current_actors.end(),  // Concatenate items
+            current_items.begin(), current_items.end() );
+        all_current_actors.push_back( player.get() );         // Concatenate player
     }
 };
 

@@ -26,7 +26,10 @@ namespace cursed
 
         void render();
 
+        // Message to console, and its helper wrappers
+        void message( const TCODColor &color, std::string text, ... );
         void message( const TCODColor &color, const char *text, ... );
+        void message( const TCODColor &color, const char *text, va_list args );
 
         protected:
         void renderBar( int x, int y, int width, std::string name, 

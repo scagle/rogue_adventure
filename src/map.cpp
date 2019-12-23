@@ -20,11 +20,6 @@ namespace cursed
     Map::~Map() 
     { 
         delete[] tiles; 
-        delete fov_map; 
-        for (auto actor : this->actors)
-        {
-            delete actor;
-        }
     }
 
     void Map::construct( Engine *engine, int width, int height, Tile *tiles )
@@ -33,7 +28,7 @@ namespace cursed
         this->width = width;
         this->height = height;
         this->tiles = new Tile[width * height];
-        this->fov_map = new TCODMap( width, height );
+        this->fov_map = std::make_unique< TCODMap >( width, height );
         if ( tiles != nullptr )
         {
             for ( int x = 0; x < width; x++ )
@@ -65,7 +60,7 @@ namespace cursed
         }
 
         // Check for actor collision
-        for ( auto *actor : actors )
+        for ( auto&& actor : actors )
         {
             if ( ( actor->x == x && actor->y == y ) &&
                  ( actor->blocks ) )
@@ -97,9 +92,9 @@ namespace cursed
         return ( tiles[x +  y*width].explored );
     }
 
-    void Map::computeFov( Actor* observer, int fov_radius )
+    void Map::computeFov( Actor &observer, int fov_radius )
     {
-        fov_map->computeFov( observer->x, observer->y, fov_radius );
+        fov_map->computeFov( observer.x, observer.y, fov_radius );
     }
 
 

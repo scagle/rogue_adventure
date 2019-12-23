@@ -8,7 +8,8 @@ namespace cursed
 {
     class ResourceHandler
     {
-        std::vector< Map > maps;
+        std::vector< std::unique_ptr< Map > > maps;
+        bool initialized = false;
 
         bool loadMaps();
 
@@ -18,6 +19,6 @@ namespace cursed
 
         bool loadResources();
 
-        Map* getMap( int index ) { return &( this->maps[index] ); }
+        Map* getMap( int index ); 
     };
 };

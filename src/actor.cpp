@@ -9,9 +9,9 @@
 
 namespace cursed
 {
-    bool Actor::attemptMove( int dx, int dy, Map *map )
+    bool Actor::attemptMove( int dx, int dy, Map &map )
     {
-        if ( map->isWalkable( this->x + dx, this->y + dy ) )
+        if ( map.isWalkable( this->x + dx, this->y + dy ) )
         {
             move( dx, dy );
             return true;
@@ -27,16 +27,16 @@ namespace cursed
 
     bool Actor::moveOrAttack( int x, int y ) 
     {
-        Map* map = engine->getMap();
-        if ( map->isWall( x, y ) )
+        Map& map = engine->getMap();
+        if ( map.isWall( x, y ) )
         {
             return false;
         }
-        for ( auto *actor : *engine->getActors() )
+        for ( auto&& actor : engine->getAllActors() )
         {
             if ( actor->x == x && actor->y == y )
             {
-                Engine::getConsole()->message( TCODColor::lightRed, "%s is unphased!\n", 
+                Engine::getConsole().message( TCODColor::lightRed, "%s is unphased!\n", 
                     actor->name.c_str() );
                 return false;
             }
@@ -56,7 +56,7 @@ namespace cursed
     {
         if ( ai )
         {
-            ai->update( this );
+            ai->update( *this );
         }
     }
 };

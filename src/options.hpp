@@ -15,9 +15,12 @@ namespace cursed
         void operator=( Options const& ) = delete;
 
         // Movement Keys  
-        char UP    = 'w';
-        char DOWN  = 's';
-        char LEFT  = 'a';
-        char RIGHT = 'd';
+        int UP    = 'w';
+        int DOWN  = 's';
+        int LEFT  = 'a';
+        int RIGHT = 'd';
+
+        int PICK_UP = 'g';
+        int INVENTORY = 'i';
     };
 };

@@ -32,7 +32,7 @@ namespace cursed
     }
 
     // Methods
-    float Destructible::takeDamage( Actor *owner, float damage )
+    float Destructible::takeDamage( Actor &owner, float damage )
     {
         damage -= defense;
         if ( damage > 0 )
@@ -59,27 +59,27 @@ namespace cursed
         return amount;
     }
 
-    void Destructible::die( Actor *owner )
+    void Destructible::die( Actor &owner )
     {
         // Generate a corpse
-        owner->code = '%';
-        owner->color = TCODColor::darkRed;
-        owner->name = corpse_name;
-        owner->blocks = false;
+        owner.code = '%';
+        owner.color = TCODColor::darkRed;
+        owner.name = corpse_name;
+        owner.blocks = false;
         Engine::sendToBack(owner); // Move body so it appears below other alive actors
     }
 
-    void MonsterDestructible::die( Actor *owner )
+    void MonsterDestructible::die( Actor &owner )
     {
         // Spawn corpse
-        Engine::getConsole()->message(TCODColor::red, "%s is dead!\n", owner->name.c_str());
+        Engine::getConsole().message(TCODColor::red, "%s is dead!\n", owner.name.c_str());
         Destructible::die( owner );
     }
 
-    void PlayerDestructible::die( Actor *owner )
+    void PlayerDestructible::die( Actor &owner )
     {
         // Spawn corpse
-        Engine::getConsole()->message(TCODColor::red, "You died!\n", owner->name.c_str());
+        Engine::getConsole().message(TCODColor::red, "You died!\n", owner.name.c_str());
         Destructible::die( owner );
         Engine::setState( DEFEAT );
     }

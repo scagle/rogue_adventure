@@ -16,6 +16,9 @@ namespace cursed
             printf("*** WARNING: Could not load maps (resource_handler.cpp)\n");
             return false;
         }
+
+        initialized = true;
+
         return true;
     }
 
@@ -55,38 +58,67 @@ namespace cursed
                 y++;
             }
             printf("Successfully loaded '%s'\n", path.c_str());
-            maps.push_back( Map( Engine::getEngine(), 80, 50, tiles ) );
+            maps.push_back( std::make_unique< Map >( Engine::getEngine(), 80, 50, tiles ) );
 
             // Add aggressive trolls to map
             TCODRandom *rng = TCODRandom::getInstance();
             for ( int i = 0; i < rng->getInt(5, 10); i++ )
             {
-                Actor *actor = new Actor( Engine::getEngine(), 
+                // Create troll as unique_ptr, who's ownership will be transferred to map
+                std::unique_ptr< Actor > actor = std::make_unique< Actor >( Engine::getEngine(), 
                     rng->getInt(0, 79), rng->getInt(0, 49), 
                     'O', "troll", TCODColor::desaturatedGreen
                 );
-                actor->destructible = std::make_shared< Destructible >( 16, 1, true, 
+                actor->destructible = std::make_unique< Destructible >( 16, 1, true, 
                     "troll's carcass" );
-                actor->attacker = std::make_shared< Attacker >( rng->getInt( 1, 4 ) );
-                actor->ai = std::make_shared< MonsterAI >();
-                maps[maps.size()-1].addActor( actor );
+                actor->attacker = std::make_unique< Attacker >( rng->getInt( 1, 4 ) );
+                actor->ai = std::make_unique< MonsterAI >();
+
+                // Transfer ownership to current map
+                maps[maps.size()-1]->addActor( std::move( actor ) );
             }
 
             // Add friendly npcs to map
             for ( int i = 0; i < rng->getInt(5, 10); i++ )
             {
-                Actor *actor = new Actor( Engine::getEngine(), 
+                // Create npc as unique_ptr, who's ownership will be transferred to map
+                std::unique_ptr< Actor > actor = std::make_unique< Actor >( Engine::getEngine(), 
                     rng->getInt(0, 79), rng->getInt(0, 49), 
                     'O', "friendly dude", TCODColor::yellow
                 );
-                actor->destructible = std::make_shared< MonsterDestructible >( 16, 0, true, 
+                actor->destructible = std::make_unique< MonsterDestructible >( 16, 0, true, 
                     "dude's carcass" );
                 actor->attacker = nullptr;
-                actor->ai = std::make_shared< MonsterAI >();
-                maps[maps.size()-1].addActor( actor );
+                actor->ai = std::make_unique< MonsterAI >();
+
+                // Transfer ownership to current map
+                maps[maps.size()-1]->addActor( std::move( actor ) );
+            }
+            // Add Health items to map
+            for ( int i = 0; i < rng->getInt(5, 10); i++ )
+            {
+                // Create potion
+                std::unique_ptr< Actor > potion = std::make_unique< Actor >( Engine::getEngine(),
+                    rng->getInt(0, 79), rng->getInt(0, 49),
+                    '!', "health potion", TCODColor::pink );
+                potion->blocks = false;
+                potion->pickable = std::make_unique< Healer >( 4 );
+
+                // Transfer ownership to current map
+                maps[maps.size()-1]->addItem( std::move( potion ) );
             }
         }
 
         return true;
+    }
+
+    Map* ResourceHandler::getMap( int index ) 
+    { 
+        if ( initialized == false || maps.size() <= index )
+        {
+            printf("*** WARNING: ResourceHandler is not initialized! (resource_handler.cpp)\n");
+            return nullptr;
+        }
+        return this->maps[index].get(); 
     }
 };

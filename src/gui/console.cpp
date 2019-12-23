@@ -26,8 +26,8 @@ namespace cursed
         console->clear();
 
         // Draw Health Bar
-        renderBar( 1, 0, width-2, "HP", Engine::getPlayer()->destructible->hp, 
-            Engine::getPlayer()->destructible->max_hp, TCODColor::lightRed, TCODColor::darkerRed ); 
+        renderBar( 1, 0, width-2, "HP", Engine::getPlayer().destructible->hp, 
+            Engine::getPlayer().destructible->max_hp, TCODColor::lightRed, TCODColor::darkerRed ); 
 
         // Mouse look
         renderMouseLook();
@@ -51,14 +51,27 @@ namespace cursed
             Engine::getScreenHeight() - height );
     }
 
-    // Like printf but to the console
+    // Message to console + wrappers
     void Console::message( const TCODColor &color, const char *text, ... )
     {
-        va_list ap;
+        va_list args;
+        va_start( args, text );
+        message( color, text, args );
+        va_end( args );
+    }
+
+    void Console::message( const TCODColor &color, std::string text, ... )
+    {
+        va_list args;
+        va_start( args, text );
+        message( color, text.c_str(), args );
+        va_end( args );
+    }
+
+    void Console::message( const TCODColor &color, const char *text, va_list args )
+    {
         char buf[256];
-        va_start( ap, text );
-        vsprintf( buf, text, ap );
-        va_end( ap );
+        vsprintf( buf, text, args );
 
         char *line_begin = buf;
         char *line_end;
@@ -113,8 +126,8 @@ namespace cursed
 
     void Console::renderMouseLook()
     {
-        auto *mouse = Engine::getCurrentMouse();
-        if ( ! Engine::getMap()->isInFov( mouse->cx, mouse->cy ) )
+        auto &mouse = Engine::getCurrentMouse();
+        if ( ! Engine::getMap().isInFov( mouse.cx, mouse.cy ) )
         {
             // If mouse is out of fov nothing to render
             return;
@@ -122,9 +135,9 @@ namespace cursed
 
         char buf[256] = "";
         bool first = true;
-        for ( Actor *actor : *Engine::getActors() )
+        for ( Actor *actor : Engine::getAllActors() )
         {
-            if ( actor->x == mouse->cx && actor->y == mouse->cy )
+            if ( actor->x == mouse.cx && actor->y == mouse.cy )
             {
                 if ( ! first ) 
                 {

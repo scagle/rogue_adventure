@@ -15,6 +15,6 @@ namespace cursed
         Attacker( float power );
         virtual ~Attacker() { }
         
-        void attack( Actor *owner, Actor *target );
+        void attack( Actor &owner, Actor &target );
     };
 };

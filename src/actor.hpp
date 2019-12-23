@@ -3,10 +3,6 @@ namespace cursed
 {
     class Map;
     class Engine;
-    // Behaviors
-    //class Destructible;
-    //class Attacker;
-    //class AI;
 }
 
 #include "datatypes/position.hpp"
@@ -36,18 +32,19 @@ namespace cursed
         bool blocks = true; // Whether character blocks other actor movements
 
         // Composite Elements
-        std::shared_ptr< Destructible > destructible;
-        std::shared_ptr< Attacker     > attacker;
-        std::shared_ptr< AI           > ai;
-        std::shared_ptr< Pickable     > pickable;
-        std::shared_ptr< Container    > container;
+        std::unique_ptr< Destructible > destructible;
+        std::unique_ptr< Attacker     > attacker;
+        std::unique_ptr< AI           > ai;
+        std::unique_ptr< Pickable     > pickable;
+        std::unique_ptr< Container    > container;
 
         Actor() : x( 0 ), y( 0 ) {}
         Actor( Engine *engine, int x, int y, int code, std::string name, const TCODColor &color ) :
             engine( engine ), x( x ), y( y ), code( code ), name( name ), color( color ) {}
+        virtual ~Actor() { }
 
         virtual bool moveOrAttack( int x, int y );
-        virtual bool attemptMove( int dx, int dy, Map *map );
+        virtual bool attemptMove( int dx, int dy, Map &map );
         virtual void move( int x, int y );
         virtual void render() const;
         virtual void update();

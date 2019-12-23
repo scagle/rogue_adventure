@@ -21,9 +21,9 @@ namespace cursed
         Destructible( float max_hp, float defense, bool corpse_visible, std::string corpse_name ); 
         virtual ~Destructible() { }
 
-        float takeDamage( Actor *owner, float damage );
+        float takeDamage( Actor &owner, float damage );
         float heal( float amount );
-        virtual void die( Actor *owner );
+        virtual void die( Actor &owner );
 
         inline bool isDead() { return hp <= 0; }
 
@@ -34,7 +34,7 @@ namespace cursed
         public:
         MonsterDestructible( float max_hp, float defense, bool corpse_visible, 
             std::string corpse_name );
-        void die( Actor *owner );
+        void die( Actor &owner );
     };
 
     class PlayerDestructible : public Destructible
@@ -42,6 +42,6 @@ namespace cursed
         public:
         PlayerDestructible( float max_hp, float defense, bool corpse_visible, 
             std::string corpse_name );
-        void die( Actor *owner );
+        void die( Actor &owner );
     };
 };
