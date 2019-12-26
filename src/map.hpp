@@ -41,6 +41,8 @@ namespace cursed
         bool isWalkable( int x, int y ) const;
         bool isInFov( int x, int y ) const;
         bool isExplored( int x, int y ) const;
+        int getWidth() const { return this->width; }
+        int getHeight() const { return this->height; }
         void computeFov( Actor &observer, int fov_radius );
 
 

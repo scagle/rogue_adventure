@@ -8,8 +8,6 @@ namespace cursed
     // Static Declaration
 
     // Constructors
-    Pickable::Pickable() { }
-    Healer::Healer( float amount ) : amount( amount ) { }
 
     // Methods
     bool Pickable::pick( Actor &owner, Actor &wearer )
@@ -34,6 +32,16 @@ namespace cursed
         return false;
     }
 
+    void Pickable::drop( Actor &owner, Actor &wearer )
+    {
+        if ( wearer.container )
+        {
+            Engine::getConsole().message( TCODColor::red, "Unimplemented" );
+            //wearer.container->remove( &owner );
+            //Engine::addActor( &owner );
+        }
+    }
+
     bool Healer::use( Actor &owner, Actor &wearer )
     {
         if ( wearer.destructible )
@@ -52,5 +60,73 @@ namespace cursed
             }
         }
         return false;
+    }
+
+    bool LightningBolt::use( Actor &owner, Actor &wearer )
+    {
+        Actor *closest_monster = Engine::getClosestActor( wearer.x, wearer.y, range, false );
+        if ( ! closest_monster )
+        {
+            Engine::getConsole().message(TCODColor::lightGrey,
+                "No enemy is close enough to strike.");
+            return false;
+        }
+
+        // Strike closest monster 
+        Engine::getConsole().message( TCODColor::red, 
+            "A lightning bolt strikes the %s with a loud thunder!\n"
+            "The damage is %g hit points.", closest_monster->name.c_str(), damage );
+        closest_monster->destructible->takeDamage( *closest_monster, damage );
+
+        return Pickable::use( owner, wearer );
+    }
+
+    bool Fireball::use( Actor &owner, Actor &wearer )
+    {
+        Engine::getConsole().message( TCODColor::cyan,
+            "Left-click to target tile for the fireball,\nor right-click to cancel." );
+        int x, y;
+        if ( ! Engine::pickATile( &x, &y ) )
+        {
+            return false;
+        }
+        Engine::getConsole().message( TCODColor::orange,
+            "The fireball explodes, burning everything within %g tiles", range );
+        // Burn everything in range including player
+        for ( auto *actor : Engine::getAllActors() )
+        {
+            if ( ( actor->destructible && ! actor->destructible->isDead() ) &&
+                 ( actor->getDistance( x, y ) <= range ) )
+            {
+                Engine::getConsole().message( TCODColor::orange,
+                    "%s gets burned for  %g hit points", actor->name.c_str(), damage );
+                actor->destructible->takeDamage( *actor, damage );
+            }
+        }
+
+        return Pickable::use( owner, wearer );
+    }
+    bool Confuser::use( Actor &owner, Actor &wearer )
+    {
+        Engine::getConsole().message( TCODColor::cyan,
+            "Left-click creature to confuse it,\nor right-click to cancel." );
+        int x, y;
+        if ( ! Engine::pickATile( &x, &y, range ) )
+        {
+            return false;
+        }
+
+        Actor *actor = Engine::getClosestActor( x, y, range, true );
+        if ( !actor )
+        {
+            return false;
+        }
+
+        // Confuse monster
+        actor->ai = std::make_unique< ConfusedMonsterAI >( 5, std::move( actor->ai ) );
+        Engine::getConsole().message( TCODColor::lightBlue,
+            "The eyes of %s look vacant,\nas he starts to stumble around!", actor->name.c_str() );
+
+        return Pickable::use( owner, wearer );
     }
 };

@@ -22,5 +22,6 @@ namespace cursed
 
         int PICK_UP = 'g';
         int INVENTORY = 'i';
+        int DROP = 'd';
     };
 };

@@ -50,11 +50,16 @@ namespace cursed
 
         static void setState( GameStatus state ) { game_state = state; }
         void setActors( Map *map );
+        // TODO: void addActor( Actor* actor );
 
         static void sendToBack( Actor &actor );
         static void eraseActor( Actor *target );
+        static bool pickATile( int *x, int *y, float max_range = 0 );
 
-        void update();
+        // Can return nullptr
+        static Actor* getClosestActor( int x, int y, float range = 0, bool player_included = true ); 
+
+        void update( bool blocking = true );
         void render();
 
         private:

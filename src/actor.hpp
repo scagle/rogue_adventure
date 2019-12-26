@@ -46,6 +46,7 @@ namespace cursed
         virtual bool moveOrAttack( int x, int y );
         virtual bool attemptMove( int dx, int dy, Map &map );
         virtual void move( int x, int y );
+        virtual float getDistance( int cx, int cy ) const; 
         virtual void render() const;
         virtual void update();
     };

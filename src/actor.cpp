@@ -6,6 +6,7 @@
 #include "datatypes/array2d.hpp"
 
 #include <libtcod/libtcod.hpp>
+#include <math.h>
 
 namespace cursed
 {
@@ -44,6 +45,13 @@ namespace cursed
         this->x = x;
         this->y = y;
         return true;
+    }
+
+    float Actor::getDistance( int cx, int cy ) const
+    {
+        int dx = x - cx;
+        int dy = y - cy;
+        return sqrtf( dx*dx + dy*dy );
     }
 
     void Actor::render() const

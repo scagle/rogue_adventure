@@ -40,7 +40,7 @@ namespace cursed
             console->printf( 0, y_offset, log[i].text.c_str(), TCOD_BKGND_NONE, TCOD_CENTER );
 
             // Check to see if its old
-            if ( y_offset == 7)
+            if ( y_offset == height)
                 break;
             y_offset++;
         }

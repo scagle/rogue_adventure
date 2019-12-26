@@ -71,7 +71,7 @@ namespace cursed
                 );
                 actor->destructible = std::make_unique< Destructible >( 16, 1, true, 
                     "troll's carcass" );
-                actor->attacker = std::make_unique< Attacker >( rng->getInt( 1, 4 ) );
+                actor->attacker = std::make_unique< Attacker >( rng->getInt( 4, 4 ) );
                 actor->ai = std::make_unique< MonsterAI >();
 
                 // Transfer ownership to current map
@@ -88,24 +88,64 @@ namespace cursed
                 );
                 actor->destructible = std::make_unique< MonsterDestructible >( 16, 0, true, 
                     "dude's carcass" );
-                actor->attacker = nullptr;
+                actor->attacker = std::make_unique< Attacker >( 0 );
                 actor->ai = std::make_unique< MonsterAI >();
 
                 // Transfer ownership to current map
                 maps[maps.size()-1]->addActor( std::move( actor ) );
             }
             // Add Health items to map
-            for ( int i = 0; i < rng->getInt(5, 10); i++ )
+            for ( int i = 0; i < rng->getInt(5, 50); i++ )
             {
-                // Create potion
-                std::unique_ptr< Actor > potion = std::make_unique< Actor >( Engine::getEngine(),
-                    rng->getInt(0, 79), rng->getInt(0, 49),
-                    '!', "health potion", TCODColor::pink );
-                potion->blocks = false;
-                potion->pickable = std::make_unique< Healer >( 4 );
+                int type = rng->getInt( 0, 100 );
+                if ( type < 20 )
+                {
+                    // Create potion
+                    std::unique_ptr< Actor > potion = std::make_unique< Actor >( Engine::getEngine(),
+                        rng->getInt(0, 79), rng->getInt(0, 49),
+                        '!', "health potion", TCODColor::pink );
+                    potion->blocks = false;
+                    potion->pickable = std::make_unique< Healer >( 4 );
 
-                // Transfer ownership to current map
-                maps[maps.size()-1]->addItem( std::move( potion ) );
+                    // Transfer ownership to current map
+                    maps[maps.size()-1]->addItem( std::move( potion ) );
+                }
+                else if ( type < 40 )
+                {
+                    // Create LightningBolt
+                    std::unique_ptr< Actor > lbolt = std::make_unique< Actor >( Engine::getEngine(),
+                        rng->getInt(0, 79), rng->getInt(0, 49),
+                        '#', "Scroll of Lightning Bolt", TCODColor::lightYellow );
+                    lbolt->blocks = false;
+                    lbolt->pickable = std::make_unique< LightningBolt >( 5, 20 );
+
+                    // Transfer ownership to current map
+                    maps[maps.size()-1]->addItem( std::move( lbolt ) );
+                }
+                else if ( type < 60 )
+                {
+                    // Create Fireball
+                    std::unique_ptr< Actor > fball = std::make_unique< Actor >( Engine::getEngine(),
+                        rng->getInt(0, 79), rng->getInt(0, 49),
+                        '#', "Scroll of Fireball", TCODColor::orange );
+                    fball->blocks = false;
+                    fball->pickable = std::make_unique< Fireball >( 5, 5 );
+
+                    // Transfer ownership to current map
+                    maps[maps.size()-1]->addItem( std::move( fball ) );
+                }
+                else 
+                {
+                    // Create Confuser
+                    std::unique_ptr< Actor > confr = std::make_unique< Actor >( Engine::getEngine(),
+                        rng->getInt(0, 79), rng->getInt(0, 49),
+                        '#', "Scroll of Confusion", TCODColor::lightBlue );
+                    confr->blocks = false;
+                    confr->pickable = std::make_unique< Confuser >( 5, 5 );
+
+                    // Transfer ownership to current map
+                    maps[maps.size()-1]->addItem( std::move( confr ) );
+                }
             }
         }
 

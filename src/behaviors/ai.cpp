@@ -17,9 +17,10 @@ namespace cursed
     TCODConsole PlayerAI::inv_console( INVENTORY_WIDTH, INVENTORY_HEIGHT );
 
     // Constructors
-    AI::AI()
+    ConfusedMonsterAI::ConfusedMonsterAI( int turns, std::unique_ptr< AI > old_ai ) 
+        : turns( turns )
     {
-        
+        this->old_ai = std::move( old_ai ); // Move ownership of old ai to confused ai
     }
 
     // Methods
@@ -96,6 +97,15 @@ namespace cursed
             if ( actor )
             {
                 actor->pickable->use( *actor, owner );
+                Engine::setState( NEW_TURN );
+            }
+        }
+        else if ( key == options.DROP )
+        {
+            Actor *actor = chooseFromInventory( owner );
+            if ( actor )
+            {
+                actor->pickable->drop( *actor, owner );
                 Engine::setState( NEW_TURN );
             }
         }
@@ -243,5 +253,38 @@ namespace cursed
             owner.attacker->attack( owner, engine->getPlayer() );
         }
         return false;
+    }
+
+    void ConfusedMonsterAI::update( Actor &owner )
+    {
+        TCODRandom *rng = TCODRandom::getInstance();
+        int dx = rng->getInt( -1 , 1 );
+        int dy = rng->getInt( -1 , 1 );
+        int destx = owner.x + dx;
+        int desty = owner.y + dy;
+        if ( Engine::getMap().isWalkable( destx, desty ) )
+        {
+            owner.x = destx;
+            owner.y = desty;
+        }
+        else
+        {
+            Actor *actor = Engine::getClosestActor( destx, desty, 0, true );
+            if ( actor )
+            {
+                owner.attacker->attack( owner, *actor );
+            }
+        }
+        turns--;
+        if ( turns == 0 )
+        {
+            restore( owner );
+        }
+    }
+
+    void ConfusedMonsterAI::restore( Actor &owner )
+    {
+        // Restore old AI back into owner, and let this ai deconstruct itself
+        owner.ai = std::move( old_ai );
     }
 };

@@ -18,7 +18,7 @@ namespace cursed
     {
 
         public:
-        AI();
+        AI() { }
         virtual ~AI() { }
 
         bool pickUpItem( Actor& owner );
@@ -46,5 +46,18 @@ namespace cursed
         int move_count;
         bool moveOrAttack( Actor &owner, int target_x, int target_y );
 
+    };
+
+    class ConfusedMonsterAI : public AI
+    {
+        protected:
+        int turns;  // Number of turns
+        std::unique_ptr< AI > old_ai; // Old AI that will be brought back after confusion ends
+
+        public:
+        ConfusedMonsterAI( int turns, std::unique_ptr< AI > old_ai );
+        ~ConfusedMonsterAI() { }
+        void update( Actor &owner );
+        void restore( Actor &owner );
     };
 };
