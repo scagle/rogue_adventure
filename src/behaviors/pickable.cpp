@@ -18,8 +18,7 @@ namespace cursed
         if ( wearer.container && wearer.container->add( &owner ) )
         {
             // Also remove from list of actors in map
-            auto& actors = Engine::getAllActors();
-            actors.erase( std::remove( actors.begin(), actors.end(), &owner ), actors.end() );
+            Engine::eraseActor( &owner );
             return true;
         }
         return true;

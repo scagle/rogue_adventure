@@ -153,7 +153,7 @@ namespace cursed
 
         inv_console.setDefaultForeground( TCODColor::white );
 
-        std::vector< Actor* >& inventory = owner.container->getInventory();
+        std::vector< Actor* >& inventory = owner.container->getContainer();
         int shortcut = 'a'; // Key shortcut to press for each item
         int y_offset = 1;   // Display downwards
         for ( auto&& actor : inventory )
@@ -178,9 +178,9 @@ namespace cursed
         if ( key.vk == TCODK_CHAR )
         {
             int actor_index = key.c - 'a';
-            if ( actor_index >= 0 && actor_index < owner.container->getInventory().size() )
+            if ( actor_index >= 0 && actor_index < owner.container->getContainer().size() )
             {
-                return owner.container->getInventory()[actor_index];
+                return owner.container->getContainer()[actor_index];
             }
         }
         return nullptr;

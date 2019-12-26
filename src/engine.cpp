@@ -70,6 +70,29 @@ namespace cursed
         current_actors.insert( current_actors.begin(), &actor );
     }
 
+    void Engine::eraseActor( Actor *target )
+    {
+        for ( auto&& actor : current_actors )
+        {
+            if ( target == actor )
+            {
+                current_actors.erase( std::remove( current_actors.begin(), current_actors.end(), 
+                    actor ), current_actors.end() );
+                return;
+            }
+        }
+
+        for ( auto&& actor : current_items )
+        {
+            if ( target == actor )
+            {
+                current_items.erase( std::remove( current_items.begin(), current_items.end(), 
+                    actor ), current_items.end() );
+                return;
+            }
+        }
+    }
+
     void Engine::update()
     {
         if ( game_state == STARTUP )

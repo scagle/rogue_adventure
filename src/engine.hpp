@@ -52,6 +52,7 @@ namespace cursed
         void setActors( Map *map );
 
         static void sendToBack( Actor &actor );
+        static void eraseActor( Actor *target );
 
         void update();
         void render();
