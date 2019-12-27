@@ -12,6 +12,8 @@ find_package(Threads REQUIRED)
 set(BASE_SOURCES 
     actor.cpp
     actor.hpp
+    container_component.cpp
+    container_component.hpp
     resource_handler.cpp
     resource_handler.hpp
     engine.cpp

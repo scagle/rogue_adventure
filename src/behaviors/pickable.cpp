@@ -12,8 +12,9 @@ namespace cursed
     // Methods
     bool Pickable::pick( Actor &owner, Actor &wearer )
     {
-        // See if wearer has container, and add item if able
-        if ( wearer.container && wearer.container->add( &owner ) )
+        // See if wearer has inventory, and add item if able
+        if ( wearer.inventory 
+          && wearer.inventory->moveTo( &owner, &Engine::getMap(), wearer.inventory.get() ) )
         {
             // Also remove from list of actors in map
             Engine::eraseActor( &owner );
@@ -24,9 +25,9 @@ namespace cursed
 
     bool Pickable::use( Actor &owner, Actor &wearer )
     {
-        if ( wearer.container )
+        if ( wearer.inventory )
         {
-            wearer.container->remove( &owner );
+            wearer.inventory->erase( &owner );
             return true;
         }
         return false;
@@ -34,11 +35,10 @@ namespace cursed
 
     void Pickable::drop( Actor &owner, Actor &wearer )
     {
-        if ( wearer.container )
+        if ( wearer.inventory )
         {
             Engine::getConsole().message( TCODColor::red, "Unimplemented" );
-            //wearer.container->remove( &owner );
-            //Engine::addActor( &owner );
+            wearer.inventory->moveTo( &owner, wearer.inventory.get(), &Engine::getMap() )
         }
     }
 

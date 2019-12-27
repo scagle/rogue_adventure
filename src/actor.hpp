@@ -11,7 +11,7 @@ namespace cursed
 #include "behaviors/attacker.hpp"
 #include "behaviors/destructible.hpp"
 #include "behaviors/pickable.hpp"
-#include "behaviors/container.hpp"
+#include "behaviors/inventory.hpp"
 
 #include <string>
 #include <libtcod/libtcod.hpp>
@@ -36,7 +36,7 @@ namespace cursed
         std::unique_ptr< Attacker     > attacker;
         std::unique_ptr< AI           > ai;
         std::unique_ptr< Pickable     > pickable;
-        std::unique_ptr< Container    > container;
+        std::unique_ptr< Inventory    > inventory;
 
         Actor() : x( 0 ), y( 0 ) {}
         Actor( Engine *engine, int x, int y, int code, std::string name, const TCODColor &color ) :
