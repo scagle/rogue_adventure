@@ -222,9 +222,24 @@ namespace cursed
         { 
             move_count--;
         }
+
         if ( move_count > 0 )
         {
             moveOrAttack( owner, engine->getPlayer().x, engine->getPlayer().y );
+        }
+        else
+        {
+            // Aimlessly wander
+            TCODRandom *rng = TCODRandom::getInstance();
+            int dx = rng->getInt( -1 , 1 );
+            int dy = rng->getInt( -1 , 1 );
+            int destx = owner.x + dx;
+            int desty = owner.y + dy;
+            if ( Engine::getMap().isWalkable( destx, desty ) )
+            {
+                owner.x = destx;
+                owner.y = desty;
+            }
         }
     }
 

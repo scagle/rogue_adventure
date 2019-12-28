@@ -40,11 +40,20 @@ namespace cursed
         this->map_visibility = 12;
 
         TCODConsole::initRoot( screen_width, screen_height, "Cursed Adventure", false );
-        console = std::make_unique< Console >( screen_width, 20 );
+        init();
 
-        // Resource management
-        resource_handler.loadResources();         // initialize ResourceHandler
-        current_map = resource_handler.getMap(0); // load map 0
+    }
+
+    Engine::~Engine()
+    {
+
+    }
+
+    // Methods
+    void Engine::init()
+    {
+        // Create console
+        console = std::make_unique< Console >( screen_width, 20 );
 
         // Character Creation
         std::unique_ptr< Actor > unique_player = 
@@ -56,41 +65,23 @@ namespace cursed
         unique_player->pickable = nullptr;
         unique_player->inventory = std::make_unique< Inventory >( 26 );
         this->player = unique_player.get();
+
+        // Resource management
+        resource_handler.loadResources();         // initialize ResourceHandler
+        current_map = resource_handler.getMap(0); // load map 0
+
         current_map->add( CREATURES, std::move( unique_player ) );
-
-        //this->setActors( current_map );           // load all actors
-
     }
 
-    Engine::~Engine()
+    void Engine::load()
     {
 
     }
 
-    // Methods
-    
-    // Get references of smart_pointer values, as we don't need to share ownership
-//  void Engine::setActors( Map *map )
-//      this->current_actors = current_map->getContainer( CREATURES );
-//      this->current_items = current_map->getContainer( ITEMS );
-//  {
-//      // 1. Get NPCs
-//      std::vector< std::unique_ptr< Actor > > &actors = current_map->getActors();
-//      current_actors.clear();
+    void Engine::save()
+    {
 
-//      // Copy and add actors to list
-//      for ( auto&& actor : actors )
-//          current_actors.push_back( actor.get() );
-
-
-//      // 2. Get Items
-//      std::vector< std::unique_ptr< Actor > > &items = current_map->getItems();
-//      current_items.clear();
-
-//      // Copy and add items to list
-//      for ( auto&& item : items )
-//          current_items.push_back( item.get() );
-//  }
+    }
 
     void Engine::sendToBack( ContainerType type, Actor &actor )
     {

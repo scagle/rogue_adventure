@@ -33,6 +33,10 @@ namespace cursed
         Engine( int screen_width, int screen_height );
         virtual ~Engine();
 
+        void init();
+        void load();
+        void save();
+
         static int getScreenWidth() { return screen_width; }
         static int getScreenHeight() { return screen_height; }
         static Engine* getEngine() { return active_engine; }
@@ -47,14 +51,10 @@ namespace cursed
         static Console& getConsole() { return *console; }
 
         static void setState( GameStatus state ) { game_state = state; }
-        // void setActors( Map *map );
-        // TODO: void addActor( Actor* actor );
 
         static void sendToBack( ContainerType type, Actor &actor );
         static void eraseActor( Actor *target );
         static bool pickATile( int *x, int *y, float max_range = 0 );
-
-        // Can return nullptr
         static Actor* getClosestActor( int x, int y, float range = 0, bool player_included = true ); 
 
         void update( bool blocking = true );

@@ -9,6 +9,8 @@ cursed::Engine engine(80, 80);
 int main() 
 {
     // Update game once on launch
+    engine.load();
+
     engine.update( false ); // non-blocking input
     engine.render();
     TCODConsole::flush();
@@ -25,6 +27,9 @@ int main()
         //auto duration = std::chrono::duration_cast< std::chrono::milliseconds >( end - begin );
         //std::this_thread::sleep_for( std::chrono::milliseconds( 20 ) - duration );
     }
+
+    engine.save();
+
     return 0;
 }
 
