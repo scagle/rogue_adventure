@@ -14,10 +14,8 @@ namespace cursed
     {
         // See if wearer has inventory, and add item if able
         if ( wearer.inventory 
-          && wearer.inventory->moveTo( &owner, &Engine::getMap(), wearer.inventory.get() ) )
+          && wearer.inventory->moveTo( ITEMS, &owner, &Engine::getMap(), wearer.inventory.get() ) )
         {
-            // Also remove from list of actors in map
-            Engine::eraseActor( &owner );
             return true;
         }
         return true;
@@ -27,7 +25,7 @@ namespace cursed
     {
         if ( wearer.inventory )
         {
-            wearer.inventory->erase( &owner );
+            wearer.inventory->erase( ITEMS, &owner );
             return true;
         }
         return false;
@@ -37,8 +35,8 @@ namespace cursed
     {
         if ( wearer.inventory )
         {
-            Engine::getConsole().message( TCODColor::red, "Unimplemented" );
-            wearer.inventory->moveTo( &owner, wearer.inventory.get(), &Engine::getMap() )
+            Engine::getConsole().message( TCODColor::red, "Experimental" );
+            wearer.inventory->moveTo( ITEMS, &owner, wearer.inventory.get(), &Engine::getMap() );
         }
     }
 
@@ -93,7 +91,7 @@ namespace cursed
         Engine::getConsole().message( TCODColor::orange,
             "The fireball explodes, burning everything within %g tiles", range );
         // Burn everything in range including player
-        for ( auto *actor : Engine::getAllActors() )
+        for ( auto&& actor : Engine::getActors() )
         {
             if ( ( actor->destructible && ! actor->destructible->isDead() ) &&
                  ( actor->getDistance( x, y ) <= range ) )

@@ -5,35 +5,29 @@ namespace cursed
     class Actor;
 }
 
+#include "../container_component.hpp"
+
 #include <vector>
 #include <memory>
 
 namespace cursed
 {
-    class Container
+    class Inventory : public ContainerComponent
     {
-        int size; // maximum number of actors. 0 = unlimited
-        std::vector< Actor* > container;
-
         public:
-        Container( int size );
-        virtual ~Container() { }
-
-        bool add( Actor* actor );
-        void remove( Actor *actor );
-
-        std::vector< Actor* >& getContainer() { return this->container; }
+        Inventory( int size );
+        virtual ~Inventory() { }
     };
 };
 
-//    class Container
+//    class Inventory
 //    {
 //        int size; // maximum number of actors. 0 = unlimited
 //        std::vector< Actor* > container;
 //
 //        public:
-//        Container( int size );
-//        virtual ~Container() { }
+//        Inventory( int size );
+//        virtual ~Inventory() { }
 //
 //        bool add( std::unique_ptr< Actor > actor );
 //        void remove( std::unique_ptr< Actor >& actor );

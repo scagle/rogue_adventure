@@ -1,42 +1,17 @@
-#include "container.hpp"
+#include "inventory.hpp"
+
 #include "../actor.hpp"
+#include "../enums/container_type.hpp"
 
 namespace cursed
 {
     // Static Declaration
 
     // Constructors
-    Container::Container( int size ) : size( size )
+    Inventory::Inventory( int size ) 
+        : ContainerComponent( size )
     {
-        
-    }
-
-    // Methods
-    bool Container::add( Actor *actor )
-    {
-        if ( size > 0 && container.size() >= size )
-        {
-            return false;
-        }
-        container.push_back( actor );
-        return true;
-    }
-
-    void Container::remove( Actor *actor )
-    {
-        container.erase( std::remove( container.begin(), container.end(), actor ), 
-            container.end() );
-
-        //int i = 0;
-        //for ( auto&& inv_actor : inventory )
-        //{
-        //    if ( inv_actor.get() == actor )
-        //    {
-        //        inventory.erase( inventory.begin() + i );
-        //        break;
-        //    }
-        //    i++;
-        //}
+        create( ITEMS );
     }
 };
 
@@ -48,13 +23,13 @@ namespace cursed
 //    // Static Declaration
 //
 //    // Constructors
-//    Container::Container( int size ) : size( size )
+//    Inventory::Inventory( int size ) : size( size )
 //    {
 //        
 //    }
 //
 //    // Methods
-//    bool Container::add( std::unique_ptr< Actor > actor )
+//    bool Inventory::add( std::unique_ptr< Actor > actor )
 //    {
 //        
 //        if ( size > 0 && container.size() >= size )
@@ -65,12 +40,12 @@ namespace cursed
 //        return true;
 //    }
 //
-//    void Container::remove( std::unique_ptr< Actor >& actor )
+//    void Inventory::remove( std::unique_ptr< Actor >& actor )
 //    {
 //        remove( actor.get() );
 //    }
 //
-//    void Container::remove( Actor *actor )
+//    void Inventory::remove( Actor *actor )
 //    {
 //        int i = 0;
 //        for ( auto&& container_actor : container )
@@ -84,12 +59,12 @@ namespace cursed
 //        }
 //    }
 //
-//    int Container::contains( std::unique_ptr< Actor >& actor )
+//    int Inventory::contains( std::unique_ptr< Actor >& actor )
 //    {
 //        return contains( actor.get() );
 //    }
 //
-//    int Container::contains( Actor *actor )
+//    int Inventory::contains( Actor *actor )
 //    {
 //        int i = 0;
 //        for ( auto&& container_actor : container )

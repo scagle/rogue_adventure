@@ -135,7 +135,8 @@ namespace cursed
 
         char buf[256] = "";
         bool first = true;
-        for ( Actor *actor : Engine::getAllActors() )
+        auto all_actors = std::move( Engine::getMap().getAllActors() );
+        for ( Actor *actor : *all_actors )
         {
             if ( actor->x == mouse.cx && actor->y == mouse.cy )
             {

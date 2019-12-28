@@ -19,16 +19,15 @@ namespace cursed
 
         static Engine *active_engine;
         static ResourceHandler resource_handler;
-        static std::vector< Actor* > current_actors;     // all npcs
-        static std::vector< Actor* > all_current_actors; // all npcs + player
-        static std::vector< Actor* > current_items;      // all items
+        //static std::vector< Actor* > current_actors;     // all npcs
+        //static std::vector< Actor* > current_items;      // all items
         static Map *current_map;        
         static int map_visibility;
         static GameStatus game_state;
         static TCOD_key_t current_key;
         static TCOD_mouse_t current_mouse;
         static std::unique_ptr< Console > console;
-        static std::unique_ptr< Actor > player;
+        static Actor *player;   // pointer to the unique_player in map
 
         public:
         Engine( int screen_width, int screen_height );
@@ -39,9 +38,8 @@ namespace cursed
         static Engine* getEngine() { return active_engine; }
         static Map& getMap() { return *current_map; }
         static Actor& getPlayer() { return *player; }
-        static std::vector< Actor* >& getNonPlayerActors() { return current_actors; }
-        static std::vector< Actor* >& getAllActors() { return all_current_actors; }
-        static std::vector< Actor* >& getItems() { return current_items; }
+        static std::vector< std::unique_ptr< Actor > >& getActors() { return current_map->getContainer( CREATURES ); }
+        static std::vector< std::unique_ptr< Actor > >& getItems() { return current_map->getContainer( ITEMS ); }
         static int getVisibility() { return map_visibility; }
         static TCOD_key_t& getCurrentKey() { return current_key; }
         static TCOD_mouse_t& getCurrentMouse() { return current_mouse; }
@@ -49,10 +47,10 @@ namespace cursed
         static Console& getConsole() { return *console; }
 
         static void setState( GameStatus state ) { game_state = state; }
-        void setActors( Map *map );
+        // void setActors( Map *map );
         // TODO: void addActor( Actor* actor );
 
-        static void sendToBack( Actor &actor );
+        static void sendToBack( ContainerType type, Actor &actor );
         static void eraseActor( Actor *target );
         static bool pickATile( int *x, int *y, float max_range = 0 );
 

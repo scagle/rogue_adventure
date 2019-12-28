@@ -75,7 +75,7 @@ namespace cursed
                 actor->ai = std::make_unique< MonsterAI >();
 
                 // Transfer ownership to current map
-                maps[maps.size()-1]->addActor( std::move( actor ) );
+                maps[maps.size()-1]->add( CREATURES, std::move( actor ) );
             }
 
             // Add friendly npcs to map
@@ -92,7 +92,7 @@ namespace cursed
                 actor->ai = std::make_unique< MonsterAI >();
 
                 // Transfer ownership to current map
-                maps[maps.size()-1]->addActor( std::move( actor ) );
+                maps[maps.size()-1]->add( CREATURES, std::move( actor ) );
             }
             // Add Health items to map
             for ( int i = 0; i < rng->getInt(5, 50); i++ )
@@ -108,7 +108,7 @@ namespace cursed
                     potion->pickable = std::make_unique< Healer >( 4 );
 
                     // Transfer ownership to current map
-                    maps[maps.size()-1]->addItem( std::move( potion ) );
+                    maps[maps.size()-1]->add( ITEMS, std::move( potion ) );
                 }
                 else if ( type < 40 )
                 {
@@ -120,7 +120,7 @@ namespace cursed
                     lbolt->pickable = std::make_unique< LightningBolt >( 5, 20 );
 
                     // Transfer ownership to current map
-                    maps[maps.size()-1]->addItem( std::move( lbolt ) );
+                    maps[maps.size()-1]->add( ITEMS, std::move( lbolt ) );
                 }
                 else if ( type < 60 )
                 {
@@ -132,7 +132,7 @@ namespace cursed
                     fball->pickable = std::make_unique< Fireball >( 5, 5 );
 
                     // Transfer ownership to current map
-                    maps[maps.size()-1]->addItem( std::move( fball ) );
+                    maps[maps.size()-1]->add( ITEMS, std::move( fball ) );
                 }
                 else 
                 {
@@ -144,7 +144,7 @@ namespace cursed
                     confr->pickable = std::make_unique< Confuser >( 5, 5 );
 
                     // Transfer ownership to current map
-                    maps[maps.size()-1]->addItem( std::move( confr ) );
+                    maps[maps.size()-1]->add( ITEMS, std::move( confr ) );
                 }
             }
         }

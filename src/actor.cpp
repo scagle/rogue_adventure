@@ -33,7 +33,7 @@ namespace cursed
         {
             return false;
         }
-        for ( auto&& actor : engine->getAllActors() )
+        for ( auto&& actor : engine->getActors() )
         {
             if ( actor->x == x && actor->y == y )
             {

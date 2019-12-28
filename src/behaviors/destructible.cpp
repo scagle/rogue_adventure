@@ -66,7 +66,7 @@ namespace cursed
         owner.color = TCODColor::darkRed;
         owner.name = corpse_name;
         owner.blocks = false;
-        Engine::sendToBack(owner); // Move body so it appears below other alive actors
+        Engine::sendToBack( CREATURES, owner); // Move body so it appears below other alive actors
     }
 
     void MonsterDestructible::die( Actor &owner )

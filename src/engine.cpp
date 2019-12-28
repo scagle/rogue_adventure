@@ -4,6 +4,7 @@
 #include "map.hpp"
 
 #include "enums/game_status.hpp"
+#include "enums/container_type.hpp"
 #include "behaviors/ai.hpp"
 #include "behaviors/attacker.hpp"
 #include "behaviors/destructible.hpp"
@@ -18,9 +19,8 @@ namespace cursed
     int Engine::screen_width;
     int Engine::screen_height;
     ResourceHandler Engine::resource_handler;
-    std::vector< Actor* > Engine::current_actors;       // all npcs
-    std::vector< Actor* > Engine::all_current_actors;   // all npcs + player                                                    
-    std::vector< Actor* > Engine::current_items;        // all items
+//  std::vector< Actor* > Engine::current_actors;       // all npcs
+//  std::vector< Actor* > Engine::current_items;        // all items
     Map *Engine::current_map;        
     int Engine::map_visibility;
     Engine *Engine::active_engine = nullptr;
@@ -28,7 +28,7 @@ namespace cursed
     TCOD_key_t Engine::current_key;
     TCOD_mouse_t Engine::current_mouse;
     std::unique_ptr< Console > Engine::console;
-    std::unique_ptr< Actor > Engine::player;
+    Actor *Engine::player = nullptr;
 
     // Constructors
     Engine::Engine( int screen_width, int screen_height )
@@ -42,19 +42,24 @@ namespace cursed
         TCODConsole::initRoot( screen_width, screen_height, "Cursed Adventure", false );
         console = std::make_unique< Console >( screen_width, 20 );
 
-        // Character Creation
-        player = std::make_unique< Actor >( this, 40, 25, '@', "player", TCODColor::white );
-        player->destructible = std::make_unique< PlayerDestructible >( 30, 2, 
-            true, "your cadaver" );
-        player->attacker = std::make_unique< Attacker >( 5 );
-        player->ai = std::make_unique< PlayerAI >();
-        player->pickable = nullptr;
-        player->container = std::make_unique< Container >( 26 );
-
         // Resource management
         resource_handler.loadResources();         // initialize ResourceHandler
         current_map = resource_handler.getMap(0); // load map 0
-        this->setActors( current_map );           // load actors
+
+        // Character Creation
+        std::unique_ptr< Actor > unique_player = 
+            std::make_unique< Actor >( this, 40, 25, '@', "player", TCODColor::white );
+        unique_player->destructible = std::make_unique< PlayerDestructible >( 30, 2, 
+            true, "your cadaver" );
+        unique_player->attacker = std::make_unique< Attacker >( 5 );
+        unique_player->ai = std::make_unique< PlayerAI >();
+        unique_player->pickable = nullptr;
+        unique_player->inventory = std::make_unique< Inventory >( 26 );
+        this->player = unique_player.get();
+        current_map->add( CREATURES, std::move( unique_player ) );
+
+        //this->setActors( current_map );           // load all actors
+
     }
 
     Engine::~Engine()
@@ -63,70 +68,39 @@ namespace cursed
     }
 
     // Methods
-    void Engine::setActors( Map *map )
+    
+    // Get references of smart_pointer values, as we don't need to share ownership
+//  void Engine::setActors( Map *map )
+//      this->current_actors = current_map->getContainer( CREATURES );
+//      this->current_items = current_map->getContainer( ITEMS );
+//  {
+//      // 1. Get NPCs
+//      std::vector< std::unique_ptr< Actor > > &actors = current_map->getActors();
+//      current_actors.clear();
+
+//      // Copy and add actors to list
+//      for ( auto&& actor : actors )
+//          current_actors.push_back( actor.get() );
+
+
+//      // 2. Get Items
+//      std::vector< std::unique_ptr< Actor > > &items = current_map->getItems();
+//      current_items.clear();
+
+//      // Copy and add items to list
+//      for ( auto&& item : items )
+//          current_items.push_back( item.get() );
+//  }
+
+    void Engine::sendToBack( ContainerType type, Actor &actor )
     {
-        // 1. Get NPCs
-        std::vector< std::unique_ptr< Actor > > &actors = current_map->getActors();
-        current_actors.clear();
-
-        // Copy and add actors to list
-        for ( auto&& actor : actors )
-            current_actors.push_back( actor.get() );
-
-
-        // 2. Get Items
-        std::vector< std::unique_ptr< Actor > > &items = current_map->getItems();
-        current_items.clear();
-
-        // Copy and add items to list
-        for ( auto&& item : items )
-            current_items.push_back( item.get() );
-
-        // 3. Get All Actors, including the main player
-        all_current_actors.clear();
-        all_current_actors.insert( all_current_actors.end(),  // Concatenate npcs
-            current_actors.begin(), current_actors.end() );
-        all_current_actors.insert( all_current_actors.end(),  // Concatenate items
-            current_items.begin(), current_items.end() );
-        all_current_actors.push_back( player.get() );         // Concatenate player
-    }
-
-    void Engine::sendToBack( Actor &actor )
-    {
-        current_actors.erase( std::remove( current_actors.begin(), current_actors.end(), &actor ), 
-            current_actors.end() );
-        current_actors.insert( current_actors.begin(), &actor );
-    }
-
-    void Engine::eraseActor( Actor *target )
-    {
-        for ( auto&& actor : current_actors )
-        {
-            if ( target == actor )
-            {
-                current_actors.erase( std::remove( current_actors.begin(), current_actors.end(), 
-                    actor ), current_actors.end() );
-                return;
-            }
-        }
-
-        for ( auto&& actor : current_items )
-        {
-            if ( target == actor )
-            {
-                current_items.erase( std::remove( current_items.begin(), current_items.end(), 
-                    actor ), current_items.end() );
-                return;
-            }
-        }
+        current_map->moveToAt( type, &actor, current_map, current_map, 0 );
     }
 
     bool Engine::pickATile( int *x, int *y, float max_range )
     {
         while ( ! TCODConsole::isWindowClosed() ) 
         {
-            getEngine()->render();
-
             // highlight possible range
             for ( int cx = 0; cx < current_map->getWidth(); cx++ )
             {
@@ -157,7 +131,9 @@ namespace cursed
                 }
             }
 
-            // TODO: Left off here! This is non-blocking when it should probably be blocking
+            getEngine()->render();
+            TCODConsole::flush();
+
             TCODSystem::waitForEvent( TCOD_EVENT_KEY_PRESS|TCOD_EVENT_MOUSE, 
                 &current_key, &current_mouse, true );
 
@@ -165,7 +141,6 @@ namespace cursed
             {
                 return false;
             }
-            TCODConsole::flush();
         }
         return false;
     }
@@ -175,11 +150,11 @@ namespace cursed
     {
         Actor *closest_actor = nullptr;
         float best_distance = 1000000; // Ridiculously high distance
-        for ( auto *actor : current_actors )
+        for ( auto&& actor : getActors() )
         {
             // If player_included then always true.
             // Or otherwise, if actor is not a player then set true  
-            bool player_inclusion_passing_condition = ( player_included || actor != player.get() );
+            bool player_inclusion_passing_condition = ( player_included || actor.get() != player );
 
             if ( ( player_inclusion_passing_condition )
               && ( actor->destructible && ! actor->destructible->isDead() ) )
@@ -188,7 +163,7 @@ namespace cursed
                 if ( distance < best_distance && ( distance <= range || range == 0 ) )
                 {
                     best_distance = distance;
-                    closest_actor = actor;
+                    closest_actor = actor.get();
                     if ( distance == 0 )
                     {
                         return closest_actor; // You're not going to find one closer than 0
@@ -224,9 +199,9 @@ namespace cursed
         // Update NPCs
         if ( game_state == NEW_TURN )
         {
-            for ( auto&& actor : current_actors )
+            for ( auto&& actor : getActors() )
             {
-                if ( actor != player.get() )    
+                if ( actor.get() != player )    
                 {
                     actor->update();
                 }
@@ -238,10 +213,11 @@ namespace cursed
     {
         TCODConsole::root->clear();
 
-        // Rendering
+        // Render Map
         current_map->render();
 
-        for ( auto&& actor : current_items )
+        // Render items
+        for ( auto&& actor : current_map->getContainer( ITEMS ) )
         {
             if ( current_map->isInFov( actor->x, actor->y ) )
             {
@@ -249,11 +225,15 @@ namespace cursed
             }
         }
 
-        for ( auto&& actor : current_actors )
+        // Render creatures
+        for ( auto&& actor : current_map->getContainer( CREATURES ) )
         {
             if ( current_map->isInFov( actor->x, actor->y ) )
             {
-                actor->render();
+                if ( actor.get() != player )
+                {
+                    actor->render();
+                }
             }
         }
 

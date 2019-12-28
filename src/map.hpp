@@ -7,12 +7,14 @@ namespace cursed
     class Tile;
 }
 
+#include "container_component.hpp"
+
 #include <libtcod/libtcod.hpp>
 #include <vector>
 
 namespace cursed
 {
-    class Map
+    class Map : public ContainerComponent
     {
         protected:
         Engine *engine;
@@ -20,8 +22,8 @@ namespace cursed
         int height;
         Tile *tiles = nullptr; 
         std::unique_ptr< TCODMap > fov_map;
-        std::vector< std::unique_ptr< Actor > > actors;
-        std::vector< std::unique_ptr< Actor > > items;
+        //std::vector< std::unique_ptr< Actor > > actors;
+        //std::vector< std::unique_ptr< Actor > > items;
 
         public:
         Map( Engine* engine, int width, int height, Tile *tiles );
@@ -29,16 +31,16 @@ namespace cursed
         void construct( Engine *engine, int width, int height, Tile *tiles );
         virtual ~Map(); 
 
-        void addActor( std::unique_ptr< Actor > actor )  
-            { this->actors.push_back( std::move( actor ) ); }
-        std::vector< std::unique_ptr< Actor > >& getActors() { return this->actors; }
+        //void addActor( std::unique_ptr< Actor > actor )  
+        //    { this->actors.push_back( std::move( actor ) ); }
+        //std::vector< std::unique_ptr< Actor > >& getActors() { return this->actors; }
 
-        void addItem( std::unique_ptr< Actor > item )
-            { this->items.push_back( std::move( item ) ); }
-        std::vector< std::unique_ptr< Actor > >& getItems() { return this->items; }
+        //void addItem( std::unique_ptr< Actor > item )
+        //    { this->items.push_back( std::move( item ) ); }
+        //std::vector< std::unique_ptr< Actor > >& getItems() { return this->items; }
 
         bool isWall( int x, int y ) const;
-        bool isWalkable( int x, int y ) const;
+        bool isWalkable( int x, int y );
         bool isInFov( int x, int y ) const;
         bool isExplored( int x, int y ) const;
         int getWidth() const { return this->width; }

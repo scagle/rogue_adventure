@@ -34,10 +34,11 @@ namespace cursed
             {
 
                 found = true;
+                std::string name = item->name;
                 if ( item->pickable->pick( *item, owner ) )
                 {
                     Engine::getConsole().message( TCODColor::lightGrey, "You pick up the %s.",
-                        item->name.c_str() );
+                        name.c_str() );
                     picked_up = true;
                     //break;
                 }
@@ -130,20 +131,28 @@ namespace cursed
         {
             return false;
         }
-        for ( auto&& actor : engine->getAllActors() )
+        // check for npcs
+        for ( auto&& actor : engine->getActors() )
         {
-            bool is_corpse_or_item = ( actor->destructible && actor->destructible->isDead() )
-                || ( actor->pickable ) ;
-            // check npcs
-            if ( ( actor->destructible ) && ( !actor->destructible->isDead() ) &&
+            if ( ( actor->destructible ) && ( actor.get() != &owner ) &&
                  ( actor->x == target_x ) && ( actor->y == target_y ) )
             {
-                owner.attacker->attack( owner, *actor );
-                return false;
+                if ( !actor->destructible->isDead() )
+                {
+                    owner.attacker->attack( owner, *actor );
+                    return false;
+                }
+                else
+                {
+                    Engine::getConsole().message(TCODColor::yellow, "Theres a %s here!\n", 
+                        actor->name.c_str()); 
+                }
             }
-            // check corpses or items
-            else if ( ( is_corpse_or_item ) &&
-                      ( actor->x == target_x ) && ( actor->y == target_y ) )
+        }
+        for ( auto&& actor : engine->getItems() )
+        {
+            // check items
+            if ( ( actor->x == target_x ) && ( actor->y == target_y ) )
             {
                 Engine::getConsole().message(TCODColor::yellow, "Theres a %s here!\n", 
                     actor->name.c_str()); 
@@ -163,7 +172,7 @@ namespace cursed
 
         inv_console.setDefaultForeground( TCODColor::white );
 
-        std::vector< Actor* >& inventory = owner.container->getContainer();
+        std::vector< std::unique_ptr< Actor > >& inventory = owner.inventory->getContainer( ITEMS );
         int shortcut = 'a'; // Key shortcut to press for each item
         int y_offset = 1;   // Display downwards
         for ( auto&& actor : inventory )
@@ -188,9 +197,9 @@ namespace cursed
         if ( key.vk == TCODK_CHAR )
         {
             int actor_index = key.c - 'a';
-            if ( actor_index >= 0 && actor_index < owner.container->getContainer().size() )
+            if ( actor_index >= 0 && actor_index < inventory.size() )
             {
-                return owner.container->getContainer()[actor_index];
+                return inventory[actor_index].get();
             }
         }
         return nullptr;

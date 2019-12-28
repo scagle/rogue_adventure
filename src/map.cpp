@@ -1,18 +1,20 @@
 #include "map.hpp"
 
 #include "engine.hpp"
-#include "engine.hpp"
 
 #include "datatypes/tile.hpp"
+#include "enums/container_type.hpp"
 
 namespace cursed
 {
     Map::Map( Engine *engine, int width, int height, Tile *tiles )
+        : ContainerComponent( INFINITE )
     {
         construct( engine, width, height, tiles );
     }
 
     Map::Map( Map const &other )
+        : ContainerComponent( INFINITE )
     {
         construct( other.engine, other.width, other.height, other.tiles );
     }
@@ -51,7 +53,7 @@ namespace cursed
         return !fov_map->isWalkable( x, y );
     }
 
-    bool Map::isWalkable( int x, int y ) const
+    bool Map::isWalkable( int x, int y )
     {
         // Check for wall
         if ( isWall( x, y ) ) 
@@ -60,7 +62,7 @@ namespace cursed
         }
 
         // Check for actor collision
-        for ( auto&& actor : actors )
+        for ( auto&& actor : getContainer( CREATURES ) )
         {
             if ( ( actor->x == x && actor->y == y ) &&
                  ( actor->blocks ) )

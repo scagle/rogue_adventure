@@ -1,6 +1,7 @@
 #include "container_component.hpp"
 
 #include "actor.hpp"
+#include "enums/container_type.hpp"
 
 #include <vector> 
 #include <algorithm> 
@@ -22,12 +23,25 @@ namespace cursed
             containers.end() );
     }
 
+    // Initialize a container type pair
+    bool ContainerComponent::create( ContainerType type )
+    {
+        if ( container_map.find( type ) == container_map.end() )
+        {
+            container_map.insert( 
+                std::make_pair( type, std::vector< std::unique_ptr< Actor > >() ) 
+            );
+            return true;
+        }
+        return false;
+    }
+
     // Erase first match from any ContainerComponent
-    bool ContainerComponent::erase( Actor *target )
+    bool ContainerComponent::erase( ContainerType type, Actor *target )
     {
         for ( auto *component : containers )
         {
-            if ( eraseFrom( target, component ) )
+            if ( eraseFrom( type, target, component ) )
             {
                 return true;
             }
@@ -38,10 +52,10 @@ namespace cursed
     }
 
     // Erase first match from specific ContainerComponent
-    bool ContainerComponent::eraseFrom( Actor *target, ContainerComponent *component )
+    bool ContainerComponent::eraseFrom( ContainerType type, Actor *target, ContainerComponent *component )
     {
         int i = 0;
-        auto&& container = component->getContainer();
+        auto&& container = component->getContainer( type );
         for ( auto&& actor : container )
         {
             if ( actor.get() == target )
@@ -56,67 +70,88 @@ namespace cursed
     }
 
     // Add to this ContainerComponent at end
-    void ContainerComponent::add( std::unique_ptr< Actor > target )
+    bool ContainerComponent::add( ContainerType type, std::unique_ptr< Actor > target )
     {
-        this->container.push_back( std::move( target ) );
+        this->container_map[type].push_back( std::move( target ) );
+        return true;
     }
 
     // Add to this ContainerComponent at specific index
-    void ContainerComponent::addTo( std::unique_ptr< Actor > target )
+    bool ContainerComponent::addAt( ContainerType type, std::unique_ptr< Actor > target, int index )
     {
-        container.insert( container.begin() + index, std::move( target ) ); 
+        container_map[type].insert( container_map[type].begin() + index, std::move( target ) ); 
+        return true;
     }
 
     // Add to specific ContainerComponent at end
-    void ContainerComponent::addTo( std::unique_ptr< Actor > target, 
+    bool ContainerComponent::addTo( ContainerType type, std::unique_ptr< Actor > target, 
         ContainerComponent *component )
     {
-        component->getContainer().push_back( std::move( target ) );
+        component->getContainer( type ).push_back( std::move( target ) );
+        return true;
     }
 
     // Add to specific ContainerComponent at specific index
-    void ContainerComponent::addToAt( std::unique_ptr< Actor > target, 
+    bool ContainerComponent::addToAt( ContainerType type, std::unique_ptr< Actor > target, 
         ContainerComponent *component, int index )
     {
-        auto&& container = component->getContainer();
+        auto&& container = component->getContainer( type );
         container.insert( container.begin() + index, std::move( target ) ); 
+        return true;
     }
 
     // Move specific Actor from one specific ContainerComponent to another one
-    void ContainerComponent::moveTo( Actor *target, ContainerComponent *source, 
+    bool ContainerComponent::moveTo( ContainerType type, Actor *target, ContainerComponent *source, 
         ContainerComponent *dest )
     {
-        auto&& sc = source->getContainer();
-        auto&& dc = dest->getContainer();
+        auto&& sc = source->getContainer( type );
+        auto&& dc = dest->getContainer( type );
         int i = 0;
         for ( auto&& actor : sc )
         {
             if ( actor.get() == target )
             {
-                dc.push_back( std::move( sc[i] ) );
+                auto temp = std::move( sc[i] );  // extra move in case of self write ( sendToBack )
                 sc.erase( sc.begin() + i );
-                return;
+                dc.push_back( std::move( temp ) );
+                return true;
             }
             i++;
         }
+        return false;
     }
 
     // Move specific Actor from one specific ContainerComponent to another one at a specific index
-    void ContainerComponent::moveToAt( Actor *target, ContainerComponent *source, 
+    bool ContainerComponent::moveToAt( ContainerType type, Actor *target, ContainerComponent *source, 
         ContainerComponent *dest, int index )
     {
-        auto&& sc = source->getContainer();
-        auto&& dc = dest->getContainer();
+        auto&& sc = source->getContainer( type );
+        auto&& dc = dest->getContainer( type );
         int i = 0;
         for ( auto&& actor : sc )
         {
             if ( actor.get() == target )
             {
-                dc.insert( dc.begin() + index, std::move( sc[i] ) );
+                auto temp = std::move( sc[i] );  // extra move in case of self write ( sendToBack )
                 sc.erase( sc.begin() + i );
-                return;
+                dc.insert( dc.begin() + index, std::move( temp ) );
+                return true;
             }
             i++;
         }
+        return false;
+    }
+    std::unique_ptr< std::vector< Actor* > > ContainerComponent::getAllActors()
+    {
+        std::unique_ptr< std::vector< Actor* > > all_actors = 
+            std::make_unique< std::vector< Actor* > >();
+        for ( auto const& pair : container_map )
+        {
+            for ( auto const& actor : pair.second )
+            {
+                all_actors->push_back( actor.get() );
+            }
+        }
+        return std::move( all_actors );
     }
 };
