@@ -35,8 +35,10 @@ namespace cursed
     {
         if ( wearer.inventory )
         {
-            Engine::getConsole().message( TCODColor::red, "Experimental" );
+            owner.x = wearer.x;
+            owner.y = wearer.y;
             wearer.inventory->moveTo( ITEMS, &owner, wearer.inventory.get(), &Engine::getMap() );
+            Engine::getConsole().message( TCODColor::grey, "You dropped %s!", owner.name.c_str() );
         }
     }
 
