@@ -7,7 +7,7 @@ namespace cursed
 {
     Map::Map( std::unique_ptr< std::array< std::array< Tile, 100 >, 100 > > tiles, 
         int width, int height )
-        : Area( std::move( tiles ), width, height )
+        : Area( std::move( tiles ), width, height, 12 )
     { 
         constructFOVMap();
     }
@@ -20,9 +20,6 @@ namespace cursed
 
     void Map::constructFOVMap( )
     {
-//      this->width = width;
-//      this->height = height;
-//      this->tiles = new Tile[width * height];
         this->fov_map = std::make_unique< TCODMap >( width, height );
         if ( tiles != nullptr )
         {
@@ -30,7 +27,6 @@ namespace cursed
             {
                 for ( int y = 0; y < height; y++ )
                 {
-//                  this->tiles[ x + y*width ] = *( tiles + ( x + y*width ) );
                     fov_map->setProperties( 
                         x, y, 
                         (*tiles)[x][y].walkable, 
@@ -39,32 +35,6 @@ namespace cursed
                 }
             }
         }
-    }
-
-    bool Map::isWall( int x, int y ) const
-    {
-        return !fov_map->isWalkable( x, y );
-    }
-
-    bool Map::isWalkable( int x, int y )
-    {
-        // Check for wall
-        if ( isWall( x, y ) ) 
-        {
-            return false;
-        }
-
-        // Check for actor collision
-        for ( auto&& actor : getContainer( CREATURES ) )
-        {
-            if ( ( actor->x == x && actor->y == y ) &&
-                 ( actor->blocks ) )
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     bool Map::isInFov( int x, int y ) const

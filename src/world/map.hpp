@@ -25,8 +25,6 @@ namespace cursed
         void constructFOVMap();
         virtual ~Map() { } 
 
-        bool isWall( int x, int y ) const;
-        bool isWalkable( int x, int y );
         bool isInFov( int x, int y ) const;
         bool isExplored( int x, int y ) const;
         void computeFov( Actor &observer, int fov_radius );

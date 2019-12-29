@@ -14,7 +14,7 @@ namespace cursed
     {
         // See if wearer has inventory, and add item if able
         if ( wearer.inventory 
-          && wearer.inventory->moveTo( ITEMS, &owner, &Engine::getMap(), wearer.inventory.get() ) )
+          && wearer.inventory->moveTo( ITEMS, &owner, &Engine::getArea(), wearer.inventory.get() ) )
         {
             return true;
         }
@@ -37,7 +37,7 @@ namespace cursed
         {
             owner.x = wearer.x;
             owner.y = wearer.y;
-            wearer.inventory->moveTo( ITEMS, &owner, wearer.inventory.get(), &Engine::getMap() );
+            wearer.inventory->moveTo( ITEMS, &owner, wearer.inventory.get(), &Engine::getArea() );
             Engine::getConsole().message( TCODColor::grey, "You dropped %s!", owner.name.c_str() );
         }
     }

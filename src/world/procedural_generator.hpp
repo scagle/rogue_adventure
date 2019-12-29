@@ -22,6 +22,6 @@ namespace cursed
 
         // Procedures
         void randomWaller( std::array< std::array< Tile, 100 >, 100 >& tiles, int width, int height, 
-            TCODRandom *seeded_rng, int bareness );
+            std::unique_ptr< TCODRandom > &seeded_rng, int bareness );
     };
 };

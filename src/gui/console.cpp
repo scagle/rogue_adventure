@@ -127,7 +127,7 @@ namespace cursed
     void Console::renderMouseLook()
     {
         auto &mouse = Engine::getCurrentMouse();
-        if ( ! Engine::getMap().isInFov( mouse.cx, mouse.cy ) )
+        if ( ! Engine::getArea().isInFov( mouse.cx, mouse.cy ) )
         {
             // If mouse is out of fov nothing to render
             return;
@@ -135,7 +135,7 @@ namespace cursed
 
         char buf[256] = "";
         bool first = true;
-        auto all_actors = std::move( Engine::getMap().getAllActors() );
+        auto all_actors = std::move( Engine::getArea().getAllActors() );
         for ( Actor *actor : *all_actors )
         {
             if ( actor->x == mouse.cx && actor->y == mouse.cy )

@@ -5,6 +5,8 @@
 #include "../../options.hpp"
 
 #include "../../enums/game_status.hpp"
+#include "../../enums/entry_point.hpp"
+#include "../../world/world.hpp"
 
 #include <libtcod/libtcod.hpp>
 #include <math.h>
@@ -61,6 +63,9 @@ namespace cursed
 
     void PlayerAI::update( Actor &owner )
     {
+        static int current_x = 0; // TODO: Temporary variable for testing map switching
+        static int current_y = 0; // TODO: Temporary variable for testing map switching
+        static bool state = true; // TODO: In Dungeon or Surface state
         // Check to see if dead
         if ( owner.destructible && owner.destructible->isDead() )
         {
@@ -110,10 +115,44 @@ namespace cursed
                 Engine::setState( NEW_TURN );
             }
         }
+        else if ( key == options.MAP_UP )
+        {
+            current_y--;
+            if ( !Engine::getEngine()->changeMap( state, current_x, current_y ) )
+                current_y++;
+            Engine::setState( NEW_TURN );
+        }
+        else if ( key == options.MAP_DOWN )
+        {
+            current_y++;
+            if ( !Engine::getEngine()->changeMap( state, current_x, current_y ) )
+                current_y--;
+            Engine::setState( NEW_TURN );
+        }
+        else if ( key == options.MAP_LEFT )
+        {
+            current_x--;
+            if ( !Engine::getEngine()->changeMap( state, current_x, current_y ) )
+                current_x++;
+            Engine::setState( NEW_TURN );
+        }
+        else if ( key == options.MAP_RIGHT )
+        {
+            current_x++;
+            if ( !Engine::getEngine()->changeMap( state, current_x, current_y ) )
+                current_x--;
+            Engine::setState( NEW_TURN );
+        }
+        else if ( key == options.MAP_SWITCH )
+        {
+            state ^= 1;
+            Engine::getEngine()->changeMap( state, current_x, current_y );
+            Engine::setState( NEW_TURN );
+        }
 
         // Update Player
         Engine *engine = Engine::getEngine();
-        Map &map = engine->getMap();
+        Area &map = engine->getArea();
         if ( dx != 0 || dy != 0 )
         {
             engine->setState( NEW_TURN );
@@ -127,7 +166,7 @@ namespace cursed
     bool PlayerAI::moveOrAttack( Actor &owner, int target_x, int target_y )
     {
         Engine *engine = Engine::getEngine();
-        if ( engine->getMap().isWall( target_x, target_y ) )
+        if ( engine->getArea().isWall( target_x, target_y ) )
         {
             return false;
         }
@@ -214,7 +253,7 @@ namespace cursed
         }
         Engine *engine = Engine::getEngine();
         // Check to see if monster is in field of view of player
-        if ( engine->getMap().isInFov( owner.x, owner.y ) )
+        if ( engine->getArea().isInFov( owner.x, owner.y ) )
         {
             move_count = MONSTER_TRACKING_TURNS;
         } 
@@ -235,7 +274,7 @@ namespace cursed
             int dy = rng->getInt( -1 , 1 );
             int destx = owner.x + dx;
             int desty = owner.y + dy;
-            if ( Engine::getMap().isWalkable( destx, desty ) )
+            if ( Engine::getArea().isWalkable( destx, desty ) )
             {
                 owner.x = destx;
                 owner.y = desty;
@@ -246,7 +285,7 @@ namespace cursed
     bool MonsterAI::moveOrAttack( Actor &owner, int target_x, int target_y )
     {
         Engine *engine = Engine::getEngine();
-        Map &map = engine->getMap();
+        Area &map = engine->getArea();
         int dx = target_x - owner.x;
         int dy = target_y - owner.y;
         int step_dx = (dx > 0) ? 1 : -1;
@@ -286,7 +325,7 @@ namespace cursed
         int dy = rng->getInt( -1 , 1 );
         int destx = owner.x + dx;
         int desty = owner.y + dy;
-        if ( Engine::getMap().isWalkable( destx, desty ) )
+        if ( Engine::getArea().isWalkable( destx, desty ) )
         {
             owner.x = destx;
             owner.y = desty;

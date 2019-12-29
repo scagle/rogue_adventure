@@ -22,6 +22,11 @@ namespace cursed
 
         int PICK_UP = 'g';
         int INVENTORY = 'i';
-        int DROP = 'h';
+        int DROP = 'z';
+        int MAP_UP='k';
+        int MAP_DOWN='j';
+        int MAP_LEFT='h';
+        int MAP_RIGHT='l';
+        int MAP_SWITCH='n';
     };
 };

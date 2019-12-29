@@ -33,7 +33,8 @@ namespace cursed
         // Switch to a different map, and move player to appropriate position
         bool switchTo( int tile_x, int tile_y, int *player_x, int *player_y, EntryPoint entry = CENTER );
 
-//      static Area* getArea() { return (in_dungeon) ? (Area*)current_zone->getMap() : (Area*)current_zone; }
-        static Map* getArea() { return (Map*)current_zone->getMap(); }
+        void setState( bool state ) { this->in_dungeon = state; }
+        static Area* getArea() { return (in_dungeon) ? (Area*)current_zone->getMap() : (Area*)current_zone; }
+ //     static Map* getArea() { return (Map*)current_zone->getMap(); }
     };
 };

@@ -10,7 +10,7 @@
 
 namespace cursed
 {
-    bool Actor::attemptMove( int dx, int dy, Map &map )
+    bool Actor::attemptMove( int dx, int dy, Area &map )
     {
         if ( map.isWalkable( this->x + dx, this->y + dy ) )
         {
@@ -28,7 +28,7 @@ namespace cursed
 
     bool Actor::moveOrAttack( int x, int y ) 
     {
-        Map& map = engine->getMap();
+        Area& map = engine->getArea();
         if ( map.isWall( x, y ) )
         {
             return false;

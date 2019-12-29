@@ -9,7 +9,7 @@ namespace cursed
     // Static Declaration
     Zone* World::current_zone = nullptr;
     int World::current_index = 0;
-    bool World::in_dungeon = false;
+    bool World::in_dungeon = true;
 
     // Constructors
     World::World()
@@ -29,7 +29,7 @@ namespace cursed
 
     bool World::switchTo( int tile_x, int tile_y, int *player_x, int *player_y, EntryPoint entry )
     {
-        if ( tile_x + width * tile_y >= zones.size() )
+        if ( !( tile_x >= 0 && tile_y >= 0 && tile_x < width && tile_y < height ) )
         {
             return false;
         }
@@ -58,7 +58,7 @@ namespace cursed
                 }
                 if ( tile_dy > 0 ) // If going down-wards
                 {
-                    *player_y = 0;
+                    *player_y = next_zone->getHeight();
                 }
                 if ( tile_dx < 0 ) // If going left-wards
                 {
@@ -66,7 +66,7 @@ namespace cursed
                 }
                 if ( tile_dy < 0 ) // If going up-wards
                 {
-                    *player_y = next_zone->getHeight();
+                    *player_y = 0;
                 }
                 break;
             }

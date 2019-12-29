@@ -15,12 +15,42 @@ namespace cursed
     // Constructors
     Zone::Zone( std::unique_ptr< std::array< std::array< Tile, 100 >, 100 > > tiles, 
         int width, int height )
-        : Area( std::move( tiles ), width, height )
+        : Area( std::move( tiles ), width, height, 50 )
     { 
         addMaps();
     }
 
     // Methods
+    bool Zone::isInFov( int x, int y ) const
+    {
+        // Check for out of boundaries ( possible with mouse look )
+        if ( x < 0 || x >= width || y < 0 || y >= height )
+        {
+            return false;
+        }
+        // Simply see if it's within distance, as opposed to using the expensive raycasting in dungeons
+        Actor& player = Engine::getPlayer();
+        int dx = player.x - x;
+        int dy = player.y - y;
+        if ( sqrtf( dx*dx + dy*dy ) < visibility ) 
+        {
+//          (*tiles)[x][y].explored = true;
+            return true;
+        }
+        return false;
+    }
+
+    bool Zone::isExplored( int x, int y ) const
+    {
+//      return ( (*tiles)[x][y].explored );
+        return true;
+    }
+
+    void Zone::computeFov( Actor &observer, int fov_radius )
+    {
+        // Do Nothing, as we don't want to use TCODMap raycast on surface
+    }
+
     void Zone::addMaps()
     {
         std::vector< std::string > paths;

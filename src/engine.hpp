@@ -15,15 +15,14 @@ namespace cursed
 {
     class Engine
     {
+        private:
         static int screen_width;
         static int screen_height;
 
         static Engine *active_engine;
         static World world;
 //      static ResourceHandler resource_handler;
-//      static std::vector< Actor* > current_actors;     // all npcs
-//      static std::vector< Actor* > current_items;      // all items
-        static Map *current_area;        
+        static Area *current_area;        
         static int map_visibility;
         static GameStatus game_state;
         static TCOD_key_t current_key;
@@ -42,8 +41,9 @@ namespace cursed
         static int getScreenWidth() { return screen_width; }
         static int getScreenHeight() { return screen_height; }
         static Engine* getEngine() { return active_engine; }
-        static Map& getMap() { return *current_area; }
+        static Area& getArea() { return *current_area; }
         static Actor& getPlayer() { return *player; }
+        static World& getWorld() { return world; }
         static std::vector< std::unique_ptr< Actor > >& getActors() { return current_area->getContainer( CREATURES ); }
         static std::vector< std::unique_ptr< Actor > >& getItems() { return current_area->getContainer( ITEMS ); }
         static int getVisibility() { return map_visibility; }
@@ -54,6 +54,7 @@ namespace cursed
 
         static void setState( GameStatus state ) { game_state = state; }
 
+        static bool changeMap( bool state = false, int tile_x = 0, int tile_y = 0 );
         static void sendToBack( ContainerType type, Actor &actor );
         static void eraseActor( Actor *target );
         static bool pickATile( int *x, int *y, float max_range = 0 );
@@ -61,7 +62,5 @@ namespace cursed
 
         void update( bool blocking = true );
         void render();
-
-        private:
     };
 };

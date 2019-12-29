@@ -23,7 +23,7 @@ namespace cursed
 //  std::vector< Actor* > Engine::current_actors;       // all npcs
 //  std::vector< Actor* > Engine::current_items;        // all items
     World Engine::world;
-    Map *Engine::current_area;        
+    Area *Engine::current_area;        
     int Engine::map_visibility;
     Engine *Engine::active_engine = nullptr;
     GameStatus Engine::game_state;
@@ -74,7 +74,7 @@ namespace cursed
 
         // Resource management
 //      resource_handler.loadResources();         // initialize ResourceHandler
-//      current_area = resource_handler.getMap(0); // load map 0
+//      current_area = resource_handler.getArea(0); // load map 0
 
         current_area->add( CREATURES, std::move( unique_player ) );
     }
@@ -89,6 +89,29 @@ namespace cursed
 
     }
 
+    bool Engine::changeMap( bool state, int tile_x, int tile_y )
+    {
+        world.setState(state);
+        if ( state ) // if in dungeon
+        {
+            Area *temp_area = current_area; // save reference to old area 
+            current_area = world.getArea();
+            temp_area->moveTo( CREATURES, player, temp_area, current_area );
+            current_area->computeFov( *player, current_area->getVisibility() );
+            return true;
+        }
+        else // if on surface
+        {
+            Area *temp_area = current_area; // save reference to old area 
+            if ( world.switchTo( tile_x, tile_y, &(player->x), &(player->y), EDGE) )
+            {
+                current_area = world.getArea();
+                temp_area->moveTo( CREATURES, player, temp_area, current_area );
+                return true;
+            }
+        }
+        return false;
+    }
     void Engine::sendToBack( ContainerType type, Actor &actor )
     {
         current_area->moveToAt( type, &actor, current_area, current_area, 0 );
@@ -175,7 +198,7 @@ namespace cursed
     {
         if ( game_state == STARTUP )
         {
-            current_area->computeFov( *player, map_visibility );
+            current_area->computeFov( *player, current_area->getVisibility() );
         }
 
         game_state = IDLE;
