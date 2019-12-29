@@ -22,17 +22,6 @@ namespace cursed
         TCODColor fg = TCODColor::white;
         TCODColor bg = TCODColor::black;
 
-        void construct( int code='?', 
-                        bool walkable=true, 
-                        bool transparent=true,
-                        bool explored=false )
-        {
-            this->code = code;    
-            this->transparent = transparent;    
-            this->walkable = walkable;    
-            this->explored = explored;    
-        }
-
         Tile(){ construct(); }
         Tile( int code )
         {
@@ -63,6 +52,17 @@ namespace cursed
             this->transparent = tile.transparent;
             this->fg = tile.fg;
             this->bg = tile.bg;
+        }
+
+        void construct( int code='?', 
+                        bool walkable=true, 
+                        bool transparent=true,
+                        bool explored=false )
+        {
+            this->code = code;    
+            this->transparent = transparent;    
+            this->walkable = walkable;    
+            this->explored = explored;    
         }
 
         TCODColor getOffsetColor( ColorType type, float offset )

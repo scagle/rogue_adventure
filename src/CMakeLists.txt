@@ -10,8 +10,6 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
 set(BASE_SOURCES 
-    actor.cpp
-    actor.hpp
     container_component.cpp
     container_component.hpp
     resource_handler.cpp
@@ -20,16 +18,15 @@ set(BASE_SOURCES
     engine.hpp
     options.hpp
     main.cpp
-    map.cpp
-    map.hpp
 )
 
+add_subdirectory(world) # WorldTiles, Maps
+add_subdirectory(character) # Actors
 add_subdirectory(datatypes)
 add_subdirectory(enums)
-add_subdirectory(behaviors) # Actor behaviors
-add_subdirectory(gui) # Actor behaviors
+add_subdirectory(gui) # Consoles
 
-add_executable(cursed ${BASE_SOURCES} ${DATATYPES_SOURCES} ${ENUMS_SOURCES} ${BEHAVIORS_SOURCES} ${GUI_SOURCES} ${INCLUDE_SOURCES})
+add_executable(cursed ${BASE_SOURCES} ${WORLD_SOURCES} ${CHARACTER_SOURCES} ${BEHAVIOR_SOURCES} ${DATATYPES_SOURCES} ${ENUMS_SOURCES} ${GUI_SOURCES} ${INCLUDE_SOURCES})
 
 target_include_directories(cursed PUBLIC ${LIBTCOD_INCLUDE_DIRS})
 

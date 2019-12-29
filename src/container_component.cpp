@@ -1,6 +1,6 @@
 #include "container_component.hpp"
 
-#include "actor.hpp"
+#include "character/actor.hpp"
 #include "enums/container_type.hpp"
 
 #include <vector> 

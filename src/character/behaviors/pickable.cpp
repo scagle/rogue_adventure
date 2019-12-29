@@ -1,7 +1,7 @@
 #include "pickable.hpp"
 
 #include "../actor.hpp"
-#include "../engine.hpp"
+#include "../../engine.hpp"
 
 namespace cursed
 {

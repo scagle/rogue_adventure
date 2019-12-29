@@ -1,10 +1,10 @@
 #include "ai.hpp"
 
 #include "../actor.hpp"
-#include "../engine.hpp"
-#include "../options.hpp"
+#include "../../engine.hpp"
+#include "../../options.hpp"
 
-#include "../enums/game_status.hpp"
+#include "../../enums/game_status.hpp"
 
 #include <libtcod/libtcod.hpp>
 #include <math.h>

@@ -1,8 +1,8 @@
 #include "destructible.hpp"
 
 #include "../actor.hpp"
-#include "../engine.hpp"
-#include "../enums/game_status.hpp"
+#include "../../engine.hpp"
+#include "../../enums/game_status.hpp"
 
 namespace cursed
 {

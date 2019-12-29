@@ -7,7 +7,7 @@ namespace cursed
     class Tile;
 }
 
-#include "container_component.hpp"
+#include "../container_component.hpp"
 
 #include <libtcod/libtcod.hpp>
 #include <vector>

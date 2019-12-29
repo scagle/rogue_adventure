@@ -1,7 +1,7 @@
 #include "attacker.hpp"
 
 #include "../actor.hpp"
-#include "../engine.hpp"
+#include "../../engine.hpp"
 
 #include <libtcod/libtcod.hpp>
 

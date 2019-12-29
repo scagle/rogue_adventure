@@ -1,7 +1,7 @@
 #include "inventory.hpp"
 
 #include "../actor.hpp"
-#include "../enums/container_type.hpp"
+#include "../../enums/container_type.hpp"
 
 namespace cursed
 {

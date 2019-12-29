@@ -1,7 +1,7 @@
 #pragma once
 
-#include "actor.hpp"
-#include "map.hpp"
+#include "character/actor.hpp"
+#include "world/map.hpp"
 #include "resource_handler.hpp"
 
 #include "enums/game_status.hpp"

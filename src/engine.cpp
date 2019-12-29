@@ -1,13 +1,13 @@
 #include "engine.hpp"
 
-#include "actor.hpp"
-#include "map.hpp"
+#include "character/actor.hpp"
+#include "world/map.hpp"
 
 #include "enums/game_status.hpp"
 #include "enums/container_type.hpp"
-#include "behaviors/ai.hpp"
-#include "behaviors/attacker.hpp"
-#include "behaviors/destructible.hpp"
+#include "character/behaviors/ai.hpp"
+#include "character/behaviors/attacker.hpp"
+#include "character/behaviors/destructible.hpp"
 
 #include <algorithm>
 

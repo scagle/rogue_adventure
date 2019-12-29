@@ -5,7 +5,7 @@ namespace cursed
     class Engine;
 }
 
-#include "datatypes/position.hpp"
+#include "../datatypes/position.hpp"
 
 #include "behaviors/ai.hpp"
 #include "behaviors/attacker.hpp"

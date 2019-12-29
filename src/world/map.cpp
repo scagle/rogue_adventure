@@ -1,9 +1,9 @@
 #include "map.hpp"
 
-#include "engine.hpp"
+#include "../engine.hpp"
 
-#include "datatypes/tile.hpp"
-#include "enums/container_type.hpp"
+#include "../datatypes/tile.hpp"
+#include "../enums/container_type.hpp"
 
 namespace cursed
 {

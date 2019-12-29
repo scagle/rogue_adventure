@@ -1,6 +1,6 @@
 #pragma once
 
-#include "map.hpp"
+#include "world/map.hpp"
 
 #include <vector>
 

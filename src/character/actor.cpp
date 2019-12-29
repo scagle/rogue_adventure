@@ -1,9 +1,9 @@
 #include "actor.hpp"
 
-#include "map.hpp"
-#include "engine.hpp"
+#include "../world/map.hpp"
+#include "../engine.hpp"
 
-#include "datatypes/array2d.hpp"
+#include "../datatypes/array2d.hpp"
 
 #include <libtcod/libtcod.hpp>
 #include <math.h>

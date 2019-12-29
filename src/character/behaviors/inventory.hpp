@@ -5,7 +5,7 @@ namespace cursed
     class Actor;
 }
 
-#include "../container_component.hpp"
+#include "../../container_component.hpp"
 
 #include <vector>
 #include <memory>
