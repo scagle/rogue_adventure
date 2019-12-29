@@ -1,5 +1,7 @@
 # Set variable, and make it visible to parent CMakeList for inclusion
 set(WORLD_SOURCES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/area.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/area.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/world.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/world.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/map.cpp

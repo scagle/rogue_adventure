@@ -8,7 +8,8 @@ namespace cursed
 {
     // Static Declaration
     Zone* World::current_zone = nullptr;
-    int World::current_index;
+    int World::current_index = 0;
+    bool World::in_dungeon = false;
 
     // Constructors
     World::World()
@@ -33,13 +34,15 @@ namespace cursed
             return false;
         }
 
-        Zone* next_zone = zones[ tile_x + width * tile_y ].get();
+        int next_index = tile_x + width * tile_y;
+        Zone* next_zone = zones[ next_index ].get();
+
         switch ( entry )
         {
             case CENTER:
             {
-                *player_x = next_zone->width / 2;    
-                *player_y = next_zone->height / 2;
+                *player_x = next_zone->getWidth() / 2;    
+                *player_y = next_zone->getHeight() / 2;
                 break;
             }
 
@@ -59,11 +62,11 @@ namespace cursed
                 }
                 if ( tile_dx < 0 ) // If going left-wards
                 {
-                    *player_x = next_zone->width;
+                    *player_x = next_zone->getWidth();
                 }
                 if ( tile_dy < 0 ) // If going up-wards
                 {
-                    *player_y = next_zone->height;
+                    *player_y = next_zone->getHeight();
                 }
                 break;
             }
@@ -74,6 +77,7 @@ namespace cursed
             }
         }
 
+        this->current_index = next_index;
         this->current_zone = next_zone;
 
         return true;

@@ -1,13 +1,14 @@
 #include "engine.hpp"
 
 #include "character/actor.hpp"
-#include "world/map.hpp"
 
 #include "enums/game_status.hpp"
 #include "enums/container_type.hpp"
 #include "character/behaviors/ai.hpp"
 #include "character/behaviors/attacker.hpp"
 #include "character/behaviors/destructible.hpp"
+#include "world/map.hpp"
+#include "world/world.hpp"
 
 #include <algorithm>
 
@@ -18,10 +19,11 @@ namespace cursed
     // Static Declaration
     int Engine::screen_width;
     int Engine::screen_height;
-    ResourceHandler Engine::resource_handler;
+//  ResourceHandler Engine::resource_handler;
 //  std::vector< Actor* > Engine::current_actors;       // all npcs
 //  std::vector< Actor* > Engine::current_items;        // all items
-    Map *Engine::current_map;        
+    World Engine::world;
+    Map *Engine::current_area;        
     int Engine::map_visibility;
     Engine *Engine::active_engine = nullptr;
     GameStatus Engine::game_state;
@@ -66,11 +68,15 @@ namespace cursed
         unique_player->inventory = std::make_unique< Inventory >( 26 );
         this->player = unique_player.get();
 
-        // Resource management
-        resource_handler.loadResources();         // initialize ResourceHandler
-        current_map = resource_handler.getMap(0); // load map 0
+        // World Creation
+        world.createWorld( 0x7FFFFFFF );
+        current_area = world.getArea();
 
-        current_map->add( CREATURES, std::move( unique_player ) );
+        // Resource management
+//      resource_handler.loadResources();         // initialize ResourceHandler
+//      current_area = resource_handler.getMap(0); // load map 0
+
+        current_area->add( CREATURES, std::move( unique_player ) );
     }
 
     void Engine::load()
@@ -85,7 +91,7 @@ namespace cursed
 
     void Engine::sendToBack( ContainerType type, Actor &actor )
     {
-        current_map->moveToAt( type, &actor, current_map, current_map, 0 );
+        current_area->moveToAt( type, &actor, current_area, current_area, 0 );
     }
 
     bool Engine::pickATile( int *x, int *y, float max_range )
@@ -93,18 +99,18 @@ namespace cursed
         while ( ! TCODConsole::isWindowClosed() ) 
         {
             // highlight possible range
-            for ( int cx = 0; cx < current_map->getWidth(); cx++ )
+            for ( int cx = 0; cx < current_area->getWidth(); cx++ )
             {
-                for ( int cy = 0; cy < current_map->getHeight(); cy++ )
+                for ( int cy = 0; cy < current_area->getHeight(); cy++ )
                 {
-                    if ( current_map->isInFov( cx, cy ) && 
+                    if ( current_area->isInFov( cx, cy ) && 
                         ( max_range == 0 || player->getDistance( cx, cy ) <= max_range ) )
                     {
                         TCODColor color = TCODConsole::root->getCharBackground( cx, cy );
                         color = color * 1.2;
                         TCODConsole::root->setCharBackground( cx, cy, color );
                     }
-                    if ( ( current_map->isInFov( current_mouse.cx, current_mouse.cy ) ) && 
+                    if ( ( current_area->isInFov( current_mouse.cx, current_mouse.cy ) ) && 
                          ( max_range == 0 || 
                            player->getDistance( 
                                 current_mouse.cx, current_mouse.cy 
@@ -169,7 +175,7 @@ namespace cursed
     {
         if ( game_state == STARTUP )
         {
-            current_map->computeFov( *player, map_visibility );
+            current_area->computeFov( *player, map_visibility );
         }
 
         game_state = IDLE;
@@ -205,21 +211,21 @@ namespace cursed
         TCODConsole::root->clear();
 
         // Render Map
-        current_map->render();
+        current_area->render();
 
         // Render items
-        for ( auto&& actor : current_map->getContainer( ITEMS ) )
+        for ( auto&& actor : current_area->getContainer( ITEMS ) )
         {
-            if ( current_map->isInFov( actor->x, actor->y ) )
+            if ( current_area->isInFov( actor->x, actor->y ) )
             {
                 actor->render();
             }
         }
 
         // Render creatures
-        for ( auto&& actor : current_map->getContainer( CREATURES ) )
+        for ( auto&& actor : current_area->getContainer( CREATURES ) )
         {
-            if ( current_map->isInFov( actor->x, actor->y ) )
+            if ( current_area->isInFov( actor->x, actor->y ) )
             {
                 if ( actor.get() != player )
                 {

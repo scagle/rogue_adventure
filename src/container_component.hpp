@@ -6,6 +6,7 @@ namespace cursed
 };
 
 #include "enums/container_type.hpp"
+
 #include <utility>
 #include <memory>
 #include <vector>
@@ -38,8 +39,7 @@ namespace cursed
         bool moveTo( ContainerType type, Actor *target, ContainerComponent *source, ContainerComponent *dest );
         bool moveToAt( ContainerType type, Actor *target, ContainerComponent *source, ContainerComponent *dest, int index );
 
-        std::vector< std::unique_ptr< Actor > >& getContainer( ContainerType type ) 
-            { return this->container_map[type]; }
+        std::vector< std::unique_ptr< Actor > >& getContainer( ContainerType type );
         std::unique_ptr< std::vector< Actor* > > getAllActors( );
 
     };

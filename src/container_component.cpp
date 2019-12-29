@@ -141,6 +141,12 @@ namespace cursed
         }
         return false;
     }
+
+    std::vector< std::unique_ptr< Actor > >& ContainerComponent::getContainer( ContainerType type ) 
+    { 
+        return this->container_map[type]; 
+    }
+
     std::unique_ptr< std::vector< Actor* > > ContainerComponent::getAllActors()
     {
         std::unique_ptr< std::vector< Actor* > > all_actors = 

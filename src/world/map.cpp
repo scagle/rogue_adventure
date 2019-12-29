@@ -1,35 +1,28 @@
 #include "map.hpp"
 
-#include "../engine.hpp"
-
+#include "../character/actor.hpp"
 #include "../datatypes/tile.hpp"
-#include "../enums/container_type.hpp"
 
 namespace cursed
 {
-    Map::Map( Engine *engine, int width, int height, Tile *tiles )
-        : ContainerComponent( INFINITE )
-    {
-        construct( engine, width, height, tiles );
-    }
-
-    Map::Map( Map const &other )
-        : ContainerComponent( INFINITE )
-    {
-        construct( other.engine, other.width, other.height, other.tiles );
-    }
-
-    Map::~Map() 
+    Map::Map( std::unique_ptr< std::array< std::array< Tile, 100 >, 100 > > tiles, 
+        int width, int height )
+        : Area( std::move( tiles ), width, height )
     { 
-        delete[] tiles; 
+        constructFOVMap();
     }
 
-    void Map::construct( Engine *engine, int width, int height, Tile *tiles )
+//  Map::Map( Map const &other )
+//      : Area( other )
+//  {
+//      constructFOVMap();
+//  }
+
+    void Map::constructFOVMap( )
     {
-        this->engine = engine;
-        this->width = width;
-        this->height = height;
-        this->tiles = new Tile[width * height];
+//      this->width = width;
+//      this->height = height;
+//      this->tiles = new Tile[width * height];
         this->fov_map = std::make_unique< TCODMap >( width, height );
         if ( tiles != nullptr )
         {
@@ -37,11 +30,11 @@ namespace cursed
             {
                 for ( int y = 0; y < height; y++ )
                 {
-                    this->tiles[ x + y*width ] = *( tiles + ( x + y*width ) );
+//                  this->tiles[ x + y*width ] = *( tiles + ( x + y*width ) );
                     fov_map->setProperties( 
                         x, y, 
-                        this->tiles[ x + y*width ].walkable, 
-                        this->tiles[ x + y*width ].transparent 
+                        (*tiles)[x][y].walkable, 
+                        (*tiles)[x][y].transparent 
                     );
                 }
             }
@@ -83,7 +76,7 @@ namespace cursed
         }
         if ( fov_map->isInFov( x, y ) )
         {
-            tiles[x + y*width].explored = true;
+            (*tiles)[x][y].explored = true;
             return true;
         }
         return false;
@@ -91,7 +84,7 @@ namespace cursed
 
     bool Map::isExplored( int x, int y ) const
     {
-        return ( tiles[x +  y*width].explored );
+        return ( (*tiles)[x][y].explored );
     }
 
     void Map::computeFov( Actor &observer, int fov_radius )
@@ -106,22 +99,22 @@ namespace cursed
         {
             for ( int y = 0; y < height; y++ )
             {
-                Tile *tile = &( tiles[x + y*width] );
-                TCODConsole::root->setChar( x, y, tile->code );
+                Tile &tile = (*tiles)[x][y];
+                TCODConsole::root->setChar( x, y, tile.code );
                 if ( isInFov( x, y ) )
                 {
-                    TCODConsole::root->setCharForeground( x, y, tile->fg );
-                    TCODConsole::root->setCharBackground( x, y, tile->bg );
+                    TCODConsole::root->setCharForeground( x, y, tile.fg );
+                    TCODConsole::root->setCharBackground( x, y, tile.bg );
                 } 
                 else
                 {
                     // Check if tile has been explored yet
-                    if ( tiles[x + y*width].explored )
+                    if ( (*tiles)[x][y].explored )
                     {
                         TCODConsole::root->setCharForeground( x, y, 
-                            tile->getOffsetColor( FG, 0.5 ) );
+                            tile.getOffsetColor( FG, 0.5 ) );
                         TCODConsole::root->setCharBackground( x, y, 
-                            tile->getOffsetColor( BG, 0.5 ) );
+                            tile.getOffsetColor( BG, 0.5 ) );
                     }
                     else
                     {

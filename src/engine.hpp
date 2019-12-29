@@ -6,6 +6,7 @@
 
 #include "enums/game_status.hpp"
 #include "gui/console.hpp"
+#include "world/world.hpp"
 
 #include <vector>
 #include <utility>
@@ -18,10 +19,11 @@ namespace cursed
         static int screen_height;
 
         static Engine *active_engine;
-        static ResourceHandler resource_handler;
-        //static std::vector< Actor* > current_actors;     // all npcs
-        //static std::vector< Actor* > current_items;      // all items
-        static Map *current_map;        
+        static World world;
+//      static ResourceHandler resource_handler;
+//      static std::vector< Actor* > current_actors;     // all npcs
+//      static std::vector< Actor* > current_items;      // all items
+        static Map *current_area;        
         static int map_visibility;
         static GameStatus game_state;
         static TCOD_key_t current_key;
@@ -40,10 +42,10 @@ namespace cursed
         static int getScreenWidth() { return screen_width; }
         static int getScreenHeight() { return screen_height; }
         static Engine* getEngine() { return active_engine; }
-        static Map& getMap() { return *current_map; }
+        static Map& getMap() { return *current_area; }
         static Actor& getPlayer() { return *player; }
-        static std::vector< std::unique_ptr< Actor > >& getActors() { return current_map->getContainer( CREATURES ); }
-        static std::vector< std::unique_ptr< Actor > >& getItems() { return current_map->getContainer( ITEMS ); }
+        static std::vector< std::unique_ptr< Actor > >& getActors() { return current_area->getContainer( CREATURES ); }
+        static std::vector< std::unique_ptr< Actor > >& getItems() { return current_area->getContainer( ITEMS ); }
         static int getVisibility() { return map_visibility; }
         static TCOD_key_t& getCurrentKey() { return current_key; }
         static TCOD_mouse_t& getCurrentMouse() { return current_mouse; }

@@ -3,6 +3,7 @@
 #include "datatypes/tile.hpp"
 #include "engine.hpp"
 
+#include <array>
 #include <fstream>
 #include <sstream>
 #include <glob.h>
@@ -42,7 +43,8 @@ namespace cursed
                 continue;
             }
 
-            Tile tiles[50 * 80];
+            std::unique_ptr< std::array< std::array< Tile, 100 >, 100 > > tiles = 
+                std::make_unique< std::array< std::array< Tile, 100 >, 100 > >();
             std::string line;
             int y = 0;
             while ( std::getline( file_stream, line ) )
@@ -52,13 +54,13 @@ namespace cursed
                 const int length = line.length();
                 for ( auto&& ch : line )
                 {
-                    tiles[x + y*length] = Tile( ch );
+                    (*tiles)[x][y] = Tile( ch );
                     x++;
                 }
                 y++;
             }
             printf("Successfully loaded '%s'\n", path.c_str());
-            maps.push_back( std::make_unique< Map >( Engine::getEngine(), 80, 50, tiles ) );
+            maps.push_back( std::make_unique< Map >( std::move( tiles ), 80, 50 ) );
 
             // Add aggressive trolls to map
             TCODRandom *rng = TCODRandom::getInstance();
