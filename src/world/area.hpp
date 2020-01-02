@@ -2,6 +2,7 @@
 namespace cursed
 {
     class Tile;
+    class Camera;
 };
 
 
@@ -35,6 +36,6 @@ namespace cursed
         int getHeight() const { return this->height; }
         int getVisibility() const { return this->visibility; }
 
-        virtual void render() const = 0;
+        virtual void render( Camera &camera ) const = 0;
     };
 };

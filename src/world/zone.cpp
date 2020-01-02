@@ -55,7 +55,7 @@ namespace cursed
     {
         std::vector< std::string > paths;
         glob_t globbuf;
-        glob("../assets/maps/*", GLOB_TILDE, NULL, &globbuf);
+        glob("../assets/maps/*.map", GLOB_TILDE, NULL, &globbuf);
         for ( int i = 0; i < globbuf.gl_pathc; i++ )
         {
             paths.push_back( globbuf.gl_pathv[i] );
@@ -171,7 +171,7 @@ namespace cursed
                         rng->getInt(0, 79), rng->getInt(0, 49),
                         '#', "Scroll of Confusion", TCODColor::lightBlue );
                     confr->blocks = false;
-                    confr->pickable = std::make_unique< Confuser >( 5, 5 );
+                    confr->pickable = std::make_unique< Confuser >( 10, 5 );
 
                     // Transfer ownership to current map
                     maps[maps.size()-1]->add( ITEMS, std::move( confr ) );
@@ -180,16 +180,14 @@ namespace cursed
         }
     }
 
-    void Zone::render() const
+    void Zone::render( Camera &camera ) const
     {
         for ( int x = 0; x < width; x++ )
         {
             for ( int y = 0; y < height; y++ )
             {
                 Tile &tile = (*tiles)[x][y];
-                TCODConsole::root->setChar( x, y, tile.code );
-                TCODConsole::root->setCharForeground( x, y, tile.fg );
-                TCODConsole::root->setCharBackground( x, y, tile.bg );
+                camera.setChar( x, y, tile.code, &tile.fg, &tile.bg );
             }
         }
     }

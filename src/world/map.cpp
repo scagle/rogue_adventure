@@ -2,6 +2,7 @@
 
 #include "../character/actor.hpp"
 #include "../datatypes/tile.hpp"
+#include "../camera.hpp"
 
 namespace cursed
 {
@@ -63,33 +64,29 @@ namespace cursed
     }
 
 
-    void Map::render() const
+    void Map::render( Camera &camera ) const
     {
         for ( int x = 0; x < width; x++ )
         {
             for ( int y = 0; y < height; y++ )
             {
                 Tile &tile = (*tiles)[x][y];
-                TCODConsole::root->setChar( x, y, tile.code );
                 if ( isInFov( x, y ) )
                 {
-                    TCODConsole::root->setCharForeground( x, y, tile.fg );
-                    TCODConsole::root->setCharBackground( x, y, tile.bg );
+                    camera.setChar( x, y, tile.code, &tile.fg, &tile.bg );
                 } 
                 else
                 {
                     // Check if tile has been explored yet
                     if ( (*tiles)[x][y].explored )
                     {
-                        TCODConsole::root->setCharForeground( x, y, 
-                            tile.getOffsetColor( FG, 0.5 ) );
-                        TCODConsole::root->setCharBackground( x, y, 
-                            tile.getOffsetColor( BG, 0.5 ) );
+                        TCODColor fg_foggy = tile.getOffsetColor( FG, 0.5 );
+                        TCODColor bg_foggy = tile.getOffsetColor( BG, 0.5 );
+                        camera.setChar( x, y, tile.code, &fg_foggy, &bg_foggy );
                     }
                     else
                     {
-                        TCODConsole::root->setCharForeground( x, y, TCODColor::black );
-                        TCODConsole::root->setCharBackground( x, y, TCODColor::black );
+                        camera.setChar( x, y, tile.code, &TCODColor::black, &TCODColor::black );
                     }
                 } 
             }

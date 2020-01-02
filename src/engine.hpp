@@ -1,12 +1,14 @@
 #pragma once
 
 #include "character/actor.hpp"
-#include "world/map.hpp"
-#include "resource_handler.hpp"
-
+#include "datatypes/mouse.hpp"
 #include "enums/game_status.hpp"
 #include "gui/console.hpp"
 #include "world/world.hpp"
+#include "world/map.hpp"
+
+#include "camera.hpp"
+#include "resource_handler.hpp"
 
 #include <vector>
 #include <utility>
@@ -20,7 +22,8 @@ namespace cursed
         static int screen_height;
 
         static Engine *active_engine;
-        static World world;
+        static World world;   // World which contains all the maps/zones
+        static Camera camera; // Player's camera viewport
 //      static ResourceHandler resource_handler;
         static Area *current_area;        
         static int map_visibility;
@@ -28,7 +31,7 @@ namespace cursed
         static TCOD_key_t current_key;
         static TCOD_mouse_t current_mouse;
         static std::unique_ptr< Console > console;
-        static Actor *player;   // pointer to the unique_player in map
+        static Actor *player; // pointer to the unique_player in map
 
         public:
         Engine( int screen_width, int screen_height );
@@ -54,6 +57,7 @@ namespace cursed
 
         static void setState( GameStatus state ) { game_state = state; }
 
+        static Mouse getAbsoluteMouse(); 
         static bool changeMap( bool state = false, int tile_x = 0, int tile_y = 0 );
         static void sendToBack( ContainerType type, Actor &actor );
         static void eraseActor( Actor *target );
@@ -62,5 +66,6 @@ namespace cursed
 
         void update( bool blocking = true );
         void render();
+        static void flush();
     };
 };

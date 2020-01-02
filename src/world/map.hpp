@@ -4,6 +4,7 @@ namespace cursed
 {
     class Actor;
     class Tile;
+    class Camera;
 }
 
 #include "../world/area.hpp"
@@ -29,6 +30,6 @@ namespace cursed
         bool isExplored( int x, int y ) const;
         void computeFov( Actor &observer, int fov_radius );
 
-        virtual void render() const;
+        virtual void render( Camera &camera ) const;
     };
 };

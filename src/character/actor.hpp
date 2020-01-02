@@ -3,6 +3,7 @@ namespace cursed
 {
     class Area;
     class Engine;
+    class Camera;
 }
 
 #include "../datatypes/position.hpp"
@@ -47,7 +48,7 @@ namespace cursed
         virtual bool attemptMove( int dx, int dy, Area &map );
         virtual void move( int x, int y );
         virtual float getDistance( int cx, int cy ) const; 
-        virtual void render() const;
+        virtual void render( Camera &camera ) const;
         virtual void update();
     };
 };

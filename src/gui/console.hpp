@@ -36,6 +36,5 @@ namespace cursed
             float value, float max_value, const TCODColor &bar_color,
             const TCODColor &back_color );
         void renderMouseLook();
-
     };
 };

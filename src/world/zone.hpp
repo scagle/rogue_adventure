@@ -1,5 +1,10 @@
 #pragma once
 
+namespace cursed
+{
+    class Camera;
+};
+
 #include "area.hpp"
 #include "map.hpp"
 #include "../datatypes/tile.hpp"
@@ -26,6 +31,6 @@ namespace cursed
 
         Map* getMap() { return this->maps[current_index].get(); }
 
-        virtual void render() const;
+        virtual void render( Camera &camera ) const;
     };
 };

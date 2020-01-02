@@ -37,6 +37,18 @@ namespace cursed
 
     };
 
+    class FollowerAI : public AI
+    {
+        public:
+        void update( Actor &owner );
+
+        protected:
+        int move_count;
+        bool moveOrAttack( Actor &owner, int target_x, int target_y );
+
+    };
+
+
     class MonsterAI : public AI
     {
         public:

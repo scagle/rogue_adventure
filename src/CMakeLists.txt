@@ -16,6 +16,8 @@ set(BASE_SOURCES
     resource_handler.hpp
     engine.cpp
     engine.hpp
+    camera.cpp
+    camera.hpp
     options.hpp
     main.cpp
 )

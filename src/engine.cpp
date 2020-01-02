@@ -1,9 +1,10 @@
 #include "engine.hpp"
 
-#include "character/actor.hpp"
-
+#include "camera.hpp"
 #include "enums/game_status.hpp"
 #include "enums/container_type.hpp"
+#include "datatypes/mouse.hpp"
+#include "character/actor.hpp"
 #include "character/behaviors/ai.hpp"
 #include "character/behaviors/attacker.hpp"
 #include "character/behaviors/destructible.hpp"
@@ -22,7 +23,8 @@ namespace cursed
 //  ResourceHandler Engine::resource_handler;
 //  std::vector< Actor* > Engine::current_actors;       // all npcs
 //  std::vector< Actor* > Engine::current_items;        // all items
-    World Engine::world;
+    World Engine::world;   // World which contains all the maps/zones
+    Camera Engine::camera; // Player's camera viewport
     Area *Engine::current_area;        
     int Engine::map_visibility;
     Engine *Engine::active_engine = nullptr;
@@ -68,6 +70,9 @@ namespace cursed
         unique_player->inventory = std::make_unique< Inventory >( 26 );
         this->player = unique_player.get();
 
+        // Create Player Camera 
+        camera.loadCamera( 80, 60, player ); // Load camera / follow player
+
         // World Creation
         world.createWorld( 0x7FFFFFFF );
         current_area = world.getArea();
@@ -87,6 +92,11 @@ namespace cursed
     void Engine::save()
     {
 
+    }
+
+    Mouse Engine::getAbsoluteMouse()
+    { 
+        return camera.getAbsoluteMouse( current_mouse ); 
     }
 
     bool Engine::changeMap( bool state, int tile_x, int tile_y )
@@ -126,25 +136,26 @@ namespace cursed
             {
                 for ( int cy = 0; cy < current_area->getHeight(); cy++ )
                 {
+                    Mouse absolute_mouse = camera.getAbsoluteMouse( current_mouse );
                     if ( current_area->isInFov( cx, cy ) && 
                         ( max_range == 0 || player->getDistance( cx, cy ) <= max_range ) )
                     {
-                        TCODColor color = TCODConsole::root->getCharBackground( cx, cy );
+                        TCODColor color = camera.getCharBackground( cx, cy );
                         color = color * 1.2;
-                        TCODConsole::root->setCharBackground( cx, cy, color );
+                        camera.setCharBackground( cx, cy, &color );
                     }
-                    if ( ( current_area->isInFov( current_mouse.cx, current_mouse.cy ) ) && 
+                    if ( ( current_area->isInFov( absolute_mouse.x, absolute_mouse.y ) ) && 
                          ( max_range == 0 || 
                            player->getDistance( 
-                                current_mouse.cx, current_mouse.cy 
+                                absolute_mouse.x, absolute_mouse.y 
                            ) <= max_range ) )
                     {
-                        TCODConsole::root->setCharBackground( current_mouse.cx, current_mouse.cy, 
-                            TCODColor::white );
+                        camera.setCharBackground( absolute_mouse.x, absolute_mouse.y, 
+                            &TCODColor::white );
                         if ( current_mouse.lbutton_pressed ) 
                         {
-                            *x = current_mouse.cx;
-                            *y = current_mouse.cy;
+                            *x = absolute_mouse.x;
+                            *y = absolute_mouse.y;
                             return true;
                         }
                     }
@@ -152,7 +163,7 @@ namespace cursed
             }
 
             getEngine()->render();
-            TCODConsole::flush();
+            flush();
 
             TCODSystem::waitForEvent( TCOD_EVENT_KEY_PRESS|TCOD_EVENT_MOUSE, 
                 &current_key, &current_mouse, true );
@@ -227,21 +238,25 @@ namespace cursed
                 }
             }
         }
+
+        // Update Camera ( Recenter )
+        camera.update();
     }
 
     void Engine::render()
     {
         TCODConsole::root->clear();
+        camera.clear();
 
         // Render Map
-        current_area->render();
+        current_area->render( camera );
 
         // Render items
         for ( auto&& actor : current_area->getContainer( ITEMS ) )
         {
             if ( current_area->isInFov( actor->x, actor->y ) )
             {
-                actor->render();
+                actor->render( camera );
             }
         }
 
@@ -252,17 +267,26 @@ namespace cursed
             {
                 if ( actor.get() != player )
                 {
-                    actor->render();
+                    actor->render( camera );
                 }
             }
         }
 
         // Render the player
-        player->render();
+        player->render( camera );
+
+        // Render the camera
+        camera.render();
 
         // Show log and stats
         console->render();
 
+    }
+
+    void Engine::flush()
+    {
+        TCODConsole::flush();
+//      camera.flush();
     }
 };
 

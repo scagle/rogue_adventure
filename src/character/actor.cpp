@@ -54,10 +54,9 @@ namespace cursed
         return sqrtf( dx*dx + dy*dy );
     }
 
-    void Actor::render() const
+    void Actor::render( Camera &camera ) const
     {
-        TCODConsole::root->setChar(x, y, code);
-        TCODConsole::root->setCharForeground(x, y, color);
+        camera.setChar( x, y, code, &color, nullptr );
     }
 
     void Actor::update() 
