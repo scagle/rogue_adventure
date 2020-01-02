@@ -58,11 +58,11 @@ namespace cursed
                 }
                 if ( tile_dy > 0 ) // If going down-wards
                 {
-                    *player_y = next_zone->getHeight();
+                    *player_y = next_zone->getHeight() - 1;
                 }
                 if ( tile_dx < 0 ) // If going left-wards
                 {
-                    *player_x = next_zone->getWidth();
+                    *player_x = next_zone->getWidth() - 1;
                 }
                 if ( tile_dy < 0 ) // If going up-wards
                 {
@@ -82,5 +82,6 @@ namespace cursed
 
         return true;
     }
+
 };
 

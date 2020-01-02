@@ -13,7 +13,7 @@ int main()
 
     engine.update( false ); // non-blocking input
     engine.render();
-    TCODConsole::flush();
+    engine.flush();
 
     while ( !TCODConsole::isWindowClosed() ) 
     {

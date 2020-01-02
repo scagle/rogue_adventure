@@ -19,7 +19,14 @@ namespace cursed
 
     bool Area::isWall( int x, int y ) const
     {
-        return !(*tiles)[x][y].walkable;
+        if ( x >= 0 && x < width  && y >= 0 && y < height )
+        {
+            return !(*tiles)[x][y].walkable;
+        }
+        else
+        {
+            return true;
+        }
     }
 
     bool Area::isWalkable( int x, int y )
