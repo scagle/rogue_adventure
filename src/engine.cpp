@@ -32,6 +32,7 @@ namespace cursed
     TCOD_key_t Engine::current_key;
     TCOD_mouse_t Engine::current_mouse;
     std::unique_ptr< Console > Engine::console;
+    std::unique_ptr< MainMenu > Engine::main_menu;
     Actor *Engine::player = nullptr;
 
     // Constructors
@@ -58,6 +59,9 @@ namespace cursed
     {
         // Create console
         console = std::make_unique< Console >( screen_width, 20 );
+
+        // create main menu
+        main_menu = std::make_unique< MainMenu >( screen_width, screen_height );
 
         // Character Creation
         std::unique_ptr< Actor > unique_player = 
@@ -207,6 +211,18 @@ namespace cursed
 
     void Engine::update( bool blocking )
     {
+        if ( game_state == MENU )
+        {
+            while ( game_state == MENU && !( TCODConsole::isWindowClosed() ) )
+            {
+                render();
+                flush();
+                TCODSystem::waitForEvent( TCOD_EVENT_KEY_PRESS|TCOD_EVENT_MOUSE, 
+                    &current_key, &current_mouse, true);
+                main_menu->update( current_key, current_mouse );
+            }
+            return;
+        }
         if ( game_state == STARTUP )
         {
             current_area->computeFov( *player, current_area->getVisibility() );
@@ -245,6 +261,11 @@ namespace cursed
 
     void Engine::render()
     {
+        if ( game_state == MENU )
+        {
+            main_menu->render( TCODConsole::root );
+            return;
+        }
         TCODConsole::root->clear();
         camera.clear();
 

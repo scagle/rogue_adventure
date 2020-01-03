@@ -75,29 +75,38 @@ namespace cursed
         // Update Player
         int dx = 0;
         int dy = 0;
-        int key = Engine::getCurrentKey().c;
+        TCOD_keycode_t special_key = Engine::getCurrentKey().vk;
+        int regular_key = Engine::getCurrentKey().c;
         Options &options = Options::getOptions();
-        if ( key == options.UP )
+
+        // Special Keys
+        if ( special_key == options.MENU )
+        {
+            Engine::setState( MENU );
+        }
+
+        // Regular Keys
+        if ( regular_key == options.UP )
         {
             dx = 0; dy = -1;
         }
-        else if ( key == options.DOWN )
+        else if ( regular_key == options.DOWN )
         {
             dx = 0; dy = 1;
         }
-        else if ( key == options.LEFT )
+        else if ( regular_key == options.LEFT )
         {
             dx = -1; dy = 0;
         }
-        else if ( key == options.RIGHT )
+        else if ( regular_key == options.RIGHT )
         {
             dx = 1; dy = 0;
         }
-        else if ( key == options.PICK_UP )
+        else if ( regular_key == options.PICK_UP )
         {
             AI::pickUpItem( owner );
         }
-        else if ( key == options.INVENTORY )
+        else if ( regular_key == options.INVENTORY )
         {
             Actor *actor = chooseFromInventory( owner );
             if ( actor )
@@ -106,7 +115,7 @@ namespace cursed
                 Engine::setState( NEW_TURN );
             }
         }
-        else if ( key == options.DROP )
+        else if ( regular_key == options.DROP )
         {
             Actor *actor = chooseFromInventory( owner );
             if ( actor )
@@ -115,41 +124,41 @@ namespace cursed
                 Engine::setState( NEW_TURN );
             }
         }
-        else if ( key == options.MAP_UP )
+        else if ( regular_key == options.MAP_UP )
         {
             current_y--;
             if ( !Engine::getEngine()->changeMap( state, current_x, current_y ) )
                 current_y++;
             Engine::setState( NEW_TURN );
         }
-        else if ( key == options.MAP_DOWN )
+        else if ( regular_key == options.MAP_DOWN )
         {
             current_y++;
             if ( !Engine::getEngine()->changeMap( state, current_x, current_y ) )
                 current_y--;
             Engine::setState( NEW_TURN );
         }
-        else if ( key == options.MAP_LEFT )
+        else if ( regular_key == options.MAP_LEFT )
         {
             current_x--;
             if ( !Engine::getEngine()->changeMap( state, current_x, current_y ) )
                 current_x++;
             Engine::setState( NEW_TURN );
         }
-        else if ( key == options.MAP_RIGHT )
+        else if ( regular_key == options.MAP_RIGHT )
         {
             current_x++;
             if ( !Engine::getEngine()->changeMap( state, current_x, current_y ) )
                 current_x--;
             Engine::setState( NEW_TURN );
         }
-        else if ( key == options.MAP_SWITCH )
+        else if ( regular_key == options.MAP_SWITCH )
         {
             state ^= 1;
             Engine::getEngine()->changeMap( state, current_x, current_y );
             Engine::setState( NEW_TURN );
         }
-
+        
         // Update Player
         Engine *engine = Engine::getEngine();
         Area &map = engine->getArea();

@@ -4,6 +4,7 @@
 #include "datatypes/mouse.hpp"
 #include "enums/game_status.hpp"
 #include "gui/console.hpp"
+#include "gui/menu.hpp"
 #include "world/world.hpp"
 #include "world/map.hpp"
 
@@ -31,6 +32,7 @@ namespace cursed
         static TCOD_key_t current_key;
         static TCOD_mouse_t current_mouse;
         static std::unique_ptr< Console > console;
+        static std::unique_ptr< MainMenu > main_menu;
         static Actor *player; // pointer to the unique_player in map
 
         public:
@@ -54,6 +56,7 @@ namespace cursed
         static TCOD_mouse_t& getCurrentMouse() { return current_mouse; }
         static GameStatus getState() { return game_state; }
         static Console& getConsole() { return *console; }
+        static MainMenu& getMainMenu() { return *main_menu; }
 
         static void setState( GameStatus state ) { game_state = state; }
 

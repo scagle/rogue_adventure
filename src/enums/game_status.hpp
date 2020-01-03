@@ -7,6 +7,7 @@ namespace cursed
         STARTUP,
         IDLE,
         NEW_TURN,
+        MENU,
         VICTORY,
         DEFEAT,
     };
