@@ -79,12 +79,6 @@ namespace cursed
         int regular_key = Engine::getCurrentKey().c;
         Options &options = Options::getOptions();
 
-        // Special Keys
-        if ( special_key == options.MENU )
-        {
-            Engine::setState( MENU );
-        }
-
         // Regular Keys
         if ( regular_key == options.UP )
         {

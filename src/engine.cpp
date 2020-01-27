@@ -1,6 +1,7 @@
 #include "engine.hpp"
 
 #include "camera.hpp"
+#include "options.hpp"
 #include "enums/game_status.hpp"
 #include "enums/container_type.hpp"
 #include "datatypes/mouse.hpp"
@@ -18,6 +19,7 @@ namespace cursed
     extern Engine engine;
 
     // Static Declaration
+    bool Engine::close_game = false; // Close game flag
     int Engine::screen_width;
     int Engine::screen_height;
 //  ResourceHandler Engine::resource_handler;
@@ -28,7 +30,8 @@ namespace cursed
     Area *Engine::current_area;        
     int Engine::map_visibility;
     Engine *Engine::active_engine = nullptr;
-    GameStatus Engine::game_state;
+    GameStatus Engine::game_state; // Current game state 
+    GameStatus Engine::temp_state; // Temp storage state
     TCOD_key_t Engine::current_key;
     TCOD_mouse_t Engine::current_mouse;
     std::unique_ptr< Console > Engine::console;
@@ -104,7 +107,6 @@ namespace cursed
         switch (state)
         {
             case MENU:
-                main_menu->enterMenu();
                 break;
             default:
                 break;
@@ -118,10 +120,10 @@ namespace cursed
         return camera.getAbsoluteMouse( current_mouse ); 
     }
 
-    bool Engine::changeMap( bool state, int tile_x, int tile_y )
+    bool Engine::changeMap( bool in_dungeon, int tile_x, int tile_y )
     {
-        world.setState(state);
-        if ( state ) // if in dungeon
+        world.setInDungeon( in_dungeon );
+        if ( in_dungeon ) 
         {
             Area *temp_area = current_area; // save reference to old area 
             current_area = world.getArea();
@@ -228,14 +230,16 @@ namespace cursed
     {
         if ( game_state == MENU )
         {
-            while ( game_state == MENU && !( TCODConsole::isWindowClosed() ) )
+            main_menu->enterMenu(); // Add root gui onto gui stack
+            while ( ! main_menu->isEmpty() && game_state == MENU && !( TCODConsole::isWindowClosed() ) )
             {
-                render();
+                main_menu->render( TCODConsole::root );
                 flush();
                 TCODSystem::waitForEvent( TCOD_EVENT_KEY_PRESS|TCOD_EVENT_MOUSE, 
                     &current_key, &current_mouse, true);
                 main_menu->update( current_key, current_mouse );
             }
+            setState( temp_state ); // return to previous state
             return;
         }
         if ( game_state == STARTUP )
@@ -253,6 +257,12 @@ namespace cursed
         {
             TCODSystem::checkForEvent( TCOD_EVENT_KEY_PRESS|TCOD_EVENT_MOUSE, 
                 &current_key, &current_mouse );
+        }
+        
+        // Handle Special Keys
+        if ( current_key.vk == Options::getOptions().MENU )
+        {
+            Engine::setState( MENU );
         }
 
         // Update Player
@@ -276,11 +286,6 @@ namespace cursed
 
     void Engine::render()
     {
-        if ( game_state == MENU )
-        {
-            main_menu->render( TCODConsole::root );
-            return;
-        }
         TCODConsole::root->clear();
         camera.clear();
 

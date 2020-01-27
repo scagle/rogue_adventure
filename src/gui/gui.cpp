@@ -33,10 +33,10 @@ namespace cursed
         
     }
 
-    void GUI::render( TCODConsole *console, bool root, GUI* focused_gui )
+    void GUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
     {
         // See if we're focused
-        if ( root == false )
+        if ( is_parent == false )
         {
             if ( focused_gui == this ) 
             {
@@ -52,6 +52,9 @@ namespace cursed
         }
         else
         {
+            // Print the frame of parent gui
+            console->printFrame( 0, 0, console->getWidth(), console->getHeight(), true, TCOD_BKGND_DEFAULT, text.c_str() );
+
             // Render all children
             for ( auto&& child : children )
             {
@@ -64,12 +67,7 @@ namespace cursed
     {
         if ( action )
         {
-            std::printf("Performing action!\n");
             (*action)(this);
-        }
-        else 
-        {
-            std::printf("No action!\n");
         }
     }
 
@@ -79,8 +77,8 @@ namespace cursed
 
     }
 
-    void GUIButton::render( TCODConsole *console, bool root, GUI *focused_gui )
+    void GUIButton::render( TCODConsole *console, bool is_parent, GUI *focused_gui )
     {
-        GUI::render( console, root, focused_gui );
+        GUI::render( console, is_parent, focused_gui );
     }
 };

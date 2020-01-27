@@ -19,6 +19,7 @@ namespace cursed
     class Engine
     {
         private:
+        static bool close_game; // close game
         static int screen_width;
         static int screen_height;
 
@@ -28,7 +29,7 @@ namespace cursed
 //      static ResourceHandler resource_handler;
         static Area *current_area;        
         static int map_visibility;
-        static GameStatus game_state;
+        static GameStatus game_state, temp_state; // Current game state, and temp storage state
         static TCOD_key_t current_key;
         static TCOD_mouse_t current_mouse;
         static std::unique_ptr< Console > console;
@@ -57,8 +58,11 @@ namespace cursed
         static GameStatus getState() { return game_state; }
         static Console& getConsole() { return *console; }
         static MainMenu& getMainMenu() { return *main_menu; }
+        static bool isGameClosed() { return close_game; } 
 
         static void setState( GameStatus state ); 
+        static void setInDungeon( bool in_dungeon ) { world.setInDungeon( in_dungeon ); }
+        static void closeGame() { close_game = true; } 
 
         static Mouse getAbsoluteMouse(); 
         static bool changeMap( bool state = false, int tile_x = 0, int tile_y = 0 );

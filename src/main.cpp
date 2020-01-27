@@ -15,7 +15,7 @@ int main()
     engine.render();
     engine.flush();
 
-    while ( !TCODConsole::isWindowClosed() ) 
+    while ( !TCODConsole::isWindowClosed() && !engine.isGameClosed() ) 
     {
         auto begin = std::chrono::steady_clock::now();
 
