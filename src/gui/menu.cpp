@@ -12,8 +12,7 @@ namespace cursed
     // Static Declaration
 //    GUI* Menu::last_key_focused_gui; 
 //    GUI* Menu::last_mouse_focused_gui; 
-    std::pair< GUI*, int > Menu::current_focused_gui; 
-    std::stack< GUI* > Menu::gui_stack; 
+    std::stack< std::pair< GUI*, int > > Menu::gui_stack; 
 
     // Constructors
     Menu::Menu( int width, int height )
@@ -71,7 +70,7 @@ namespace cursed
         // Set Default Focus
 //      last_key_focused_gui = resume.get(); 
 //      last_mouse_focused_gui = resume.get(); 
-        current_focused_gui = { root_gui->getFirstChild(), 0 }; 
+//      gui_stack.push( { root_gui.get(), 0 } ); 
 
     }
 
@@ -89,13 +88,10 @@ namespace cursed
             this->printFrame( 0, 0, width, height, true, TCOD_BKGND_DEFAULT, "Main Menu" );
 //          this->setDefaultBackground( TCODColor::darkPurple );
 
-            if ( gui_stack.empty() )
+            GUI* current_gui = gui_stack.top().first->getChild( gui_stack.top().second );
+            if ( current_gui )
             {
-                root_gui->render( this, current_focused_gui.first ); // Render main menu
-            }
-            else
-            {
-                gui_stack.top()->render( this, current_focused_gui.first );
+                gui_stack.top().first->render( this, true, current_gui );
             }
 
             // blit the camera to the specified console
@@ -107,29 +103,23 @@ namespace cursed
     {
         TCOD_keycode_t special_key = Engine::getCurrentKey().vk;
         int regular_key = Engine::getCurrentKey().c;
+        GUI *current_focused_gui = gui_stack.top().first->getChild( gui_stack.top().second );
 
         // Special Keys
         if ( special_key == Options::getOptions().MENU )
         {
-            if ( gui_stack.empty() )
-            {
-                Engine::setState( IDLE );
-            }
-            else
-            {
-                gui_stack.pop();
-            }
+            popGUI(); 
         }
         else if ( special_key == Options::getOptions().MENU_SELECT )
         {
-            if ( current_focused_gui.first )
+            if ( current_focused_gui )
             {
-                current_focused_gui.first->performAction();
+                current_focused_gui->performAction();
             }
         }
 
         // Regular Keys
-        if ( current_focused_gui.first )
+        if ( current_focused_gui )
         {
             if ( regular_key == Options::getOptions().MENU_DOWN )
             {
@@ -144,18 +134,26 @@ namespace cursed
 
     void MainMenu::moveFocus( int direction )
     {
-        GUI *parent = current_focused_gui.first->getParent();
-        int new_index = current_focused_gui.second + direction;
-        parent->grabNextChild( &current_focused_gui, new_index );
+        if ( gui_stack.top().first->getChild( gui_stack.top().second + direction ) )
+        {
+            gui_stack.top().second += direction;
+            std::printf( "%d\n", gui_stack.top().second );
+        }
     } 
+
 
     bool MainMenu::popGUI()
     {
         if ( ! gui_stack.empty() )
         {
             gui_stack.pop();
+            if ( gui_stack.empty() )
+            {
+                exitMenu( nullptr );
+            }
             return true;
         }
+
         return false;
     }
 
@@ -166,12 +164,7 @@ namespace cursed
             std::printf("*** WARNING: Invalid gui (menu.cpp)\n");
             return;
         }
-        gui_stack.push( gui );
-        current_focused_gui = { gui->getFirstChild(), 0 };
-        if ( current_focused_gui.first )
-            std::printf("Focusing: %s\n", current_focused_gui.first->getText().c_str());
-        else
-            std::printf("Focusing: None\n");
+        gui_stack.push( { gui, 0 } );
     }
 
     void MainMenu::exitMenu( GUI* gui )

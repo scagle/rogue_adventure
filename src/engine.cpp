@@ -98,6 +98,21 @@ namespace cursed
 
     }
 
+    void Engine::setState( GameStatus state )
+    {
+        // Handle special cases 
+        switch (state)
+        {
+            case MENU:
+                main_menu->enterMenu();
+                break;
+            default:
+                break;
+        }
+
+        game_state = state;
+    }
+
     Mouse Engine::getAbsoluteMouse()
     { 
         return camera.getAbsoluteMouse( current_mouse ); 

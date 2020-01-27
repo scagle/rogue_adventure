@@ -58,7 +58,7 @@ namespace cursed
         static Console& getConsole() { return *console; }
         static MainMenu& getMainMenu() { return *main_menu; }
 
-        static void setState( GameStatus state ) { game_state = state; }
+        static void setState( GameStatus state ); 
 
         static Mouse getAbsoluteMouse(); 
         static bool changeMap( bool state = false, int tile_x = 0, int tile_y = 0 );

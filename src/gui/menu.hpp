@@ -15,10 +15,9 @@ namespace cursed
         protected:
         int width, height;
         std::unique_ptr< GUI > root_gui; 
-        static std::stack< GUI* > gui_stack; 
+        static std::stack< std::pair< GUI*, int > > gui_stack; 
 //      static GUI* last_key_focused_gui; 
 //      static GUI* last_mouse_focused_gui; 
-        static std::pair< GUI*, int > current_focused_gui; 
         
         public:
         Menu( int width, int height );
@@ -42,6 +41,8 @@ namespace cursed
         static bool popGUI();
         static void pushGUI( GUI *gui );
         static void moveFocus( int direction );
+
+        void enterMenu() { if ( gui_stack.empty() ) pushGUI( root_gui.get() ); }
 
         // Actions
         static void exitMenu( GUI* gui );

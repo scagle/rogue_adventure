@@ -47,14 +47,14 @@ namespace cursed
         virtual void setAlignment( TCOD_alignment_t alignment ) final { this->alignment = alignment; }
         virtual void setParent( GUI* parent ) final { this->parent = parent; }
         virtual void addChild( std::unique_ptr< GUI > child ) final { this->children.push_back( std::move( child ) ); }
-        virtual GUI* getChild( int index ) final { return this->children[index].get(); }
+        virtual GUI* getChild( int index ) final { return ( children.size() > index ) ? children[index].get() : nullptr; }
         virtual GUI* getFirstChild() { return ( children.size() > 0 ) ? children[0].get() : nullptr; }
 
         virtual void performAction() { }
         virtual bool grabNextChild( std::pair< GUI*, int >* focus, int new_index) final;
 
         virtual void update();
-        virtual void render( TCODConsole *console, GUI* focused_gui );
+        virtual void render( TCODConsole *console, bool root, GUI* focused_gui );
     };
 
     class GUIButton : public GUI
@@ -73,6 +73,6 @@ namespace cursed
         void performAction( ); 
 
         virtual void update();
-        virtual void render( TCODConsole *console, GUI* focused_gui );
+        virtual void render( TCODConsole *console, bool root, GUI* focused_gui );
     };
 };
