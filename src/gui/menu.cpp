@@ -10,8 +10,8 @@
 namespace cursed
 {
     // Static Declaration
-//    GUI* Menu::last_key_focused_gui; 
-//    GUI* Menu::last_mouse_focused_gui; 
+    std::vector< Menu* > Menu::instances;
+    Menu *Menu::current_focused_menu;
     std::stack< std::pair< GUI*, int > > Menu::gui_stack; 
     std::unique_ptr< GUI > Menu::root_gui; 
 
@@ -19,7 +19,13 @@ namespace cursed
     Menu::Menu( int width, int height )
         : TCODConsole( width, height ), width( width ), height( height ) 
     {
+        instances.push_back( this ); 
+    }
 
+    AgreeMenu::AgreeMenu( int width, int height )
+        : Menu( width, height )
+    {
+        init();
     }
 
     MainMenu::MainMenu( int width, int height )
@@ -28,7 +34,24 @@ namespace cursed
         init();
     }
 
+    GameMenu::GameMenu( int width, int height )
+        : Menu( width, height )
+    {
+        init();
+    }
+
     // Methods
+    void AgreeMenu::init()
+    {
+        // Game Menu Screen
+        root_gui = std::make_unique< GUI >( 0, 0, width, height );
+
+        // Set names 
+        root_gui->setText("Agreement");
+
+//      initAgreeMenu( root_gui.get() );
+    }
+
     void MainMenu::init()
     {
         // Main Menu Screen
@@ -37,16 +60,64 @@ namespace cursed
         // Set names 
         root_gui->setText("Main Menu");
 
-        initMainMenu( root_gui.get() );
-
-        // Set Default Focus
-//      last_key_focused_gui = resume.get(); 
-//      last_mouse_focused_gui = resume.get(); 
-//      current_focused_gui = { root_gui->getFirstChild(), 0 }; 
-
+//      initMainMenu( root_gui.get() );
     }
 
-    void MainMenu::initMainMenu( GUI *gui )
+    void GameMenu::init()
+    {
+        // Game Menu Screen
+        root_gui = std::make_unique< GUI >( 0, 0, width, height );
+
+        // Set names 
+        root_gui->setText("Game Menu");
+
+        initGameMenu( root_gui.get() );
+    }
+
+    void AgreeMenu::listen( ListenEvent event )
+    {
+    }
+
+    void MainMenu::listen( ListenEvent event )
+    {
+        if ( event == MAIN_MENU )
+        {
+            switchCurrentMenu( this );
+        }
+    }
+
+    void GameMenu::listen( ListenEvent event )
+    {
+    }
+
+    void Menu::emit( ListenEvent event )
+    {
+        for ( auto* instance : instances )
+        {
+            instance->listen( event );
+        }
+    }
+
+    void AgreeMenu::initAgreeMenu( GUI *gui )
+    {
+        int y_offset = 0;
+        // Content
+        std::unique_ptr< GUI > text = 
+            std::make_unique< GUIButton >( width, 0, width/2, height - 3 );
+        text->setText("This is my game it is so great I love everything about it ommmmmgooooshhhhh it is so good this message is such a substantial long message that I hope the text will wrap many many many many times before ending. I need you to agree with me.");
+        text->setParent( gui );
+        gui->addChild( std::move( text ) );
+        
+        // Agree Button
+        std::unique_ptr< GUIButton > agree = 
+            std::make_unique< GUIButton >( width/4, height-3, width/2, 3 );
+        agree->setText("\nAgree");
+        agree->setAction( Menu::actionMenu );
+        agree->setParent( gui );
+        gui->addChild( std::move( agree ) );
+    }
+
+    void GameMenu::initGameMenu( GUI *gui )
     {
         int y_offset = 0;
         // Resume Button
@@ -67,15 +138,15 @@ namespace cursed
         initSaveLoad( saveload.get() );
         gui->addChild( std::move( saveload ) );
 
-        // Options
-        std::unique_ptr< GUIButton > options = 
+        // Settings
+        std::unique_ptr< GUIButton > settings = 
             std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
-        options->setText("\nOptions");
-        options->setAction( Menu::actionPush );
-        options->setPush( options.get() );
-        options->setParent( gui );
-        initOptions( options.get() );
-        gui->addChild( std::move( options ) );
+        settings->setText("\nSettings");
+        settings->setAction( Menu::actionPush );
+        settings->setPush( settings.get() );
+        settings->setParent( gui );
+        initSettings( settings.get() );
+        gui->addChild( std::move( settings ) );
 
         // Exit
         std::unique_ptr< GUIButton > exit = 
@@ -87,40 +158,109 @@ namespace cursed
 
     }
 
-    void MainMenu::initSaveLoad( GUI *gui )
+    void GameMenu::initSaveLoad( GUI *gui )
+    {
+        int y_offset = 0;
+        // Save 
+        std::unique_ptr< GUIButton > save = 
+            std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
+        save->setText("\nSave");
+        save->setAction( Menu::actionPush );
+        save->setPush( save.get() );
+        save->setParent( gui );
+        initSave( save.get() );
+        gui->addChild( std::move( save ) );
+
+        // Load 
+        std::unique_ptr< GUIButton > load = 
+            std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
+        load->setText("\nLoad");
+        load->setAction( Menu::actionPush );
+        load->setPush( load.get() );
+        load->setParent( gui );
+        initLoad( load.get() );
+        gui->addChild( std::move( load ) );
+
+    }
+
+    void GameMenu::initSave( GUI *gui )
+    {
+        int y_offset = 0;
+        for ( int i = 0; i < 10; i++ )
+        {
+            // Save Button
+            std::unique_ptr< GUIButton > save = 
+                std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
+            save->setText("\nSave " + std::to_string( i+1 ));
+            save->setAction( Menu::actionSave );
+            save->setParent( gui );
+            gui->addChild( std::move( save ) );
+        }
+    }
+
+    void GameMenu::initLoad( GUI *gui )
+    {
+        int y_offset = 0;
+        for ( int i = 0; i < 10; i++ )
+        {
+            // Load Button
+            std::unique_ptr< GUIButton > load = 
+                std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
+            load->setText("\nLoad " + std::to_string( i+1 ));
+            load->setAction( Menu::actionLoad );
+            load->setParent( gui );
+            gui->addChild( std::move( load ) );
+        }
+    }
+    
+    void GameMenu::initSettings( GUI *gui )
+    {
+        int y_offset = 0;
+        // Game Settings
+        std::unique_ptr< GUIButton > game = 
+            std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
+        game->setText("\nGame Settings");
+        game->setAction( Menu::actionPush );
+        game->setPush( game.get() );
+        game->setParent( gui );
+        initGameSettings( game.get() );
+        gui->addChild( std::move( game ) );
+
+        // World Settings
+        std::unique_ptr< GUIButton > world = 
+            std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
+        world->setText("\nWorld Settings");
+        world->setAction( Menu::actionPush );
+        world->setPush( world.get() );
+        world->setParent( gui );
+        initWorldSettings( world.get() );
+        gui->addChild( std::move( world ) );
+
+        // Content Settings
+        std::unique_ptr< GUIButton > content = 
+            std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
+        content->setText("\nContent Settings");
+        content->setAction( Menu::actionPush );
+        content->setPush( content.get() );
+        content->setParent( gui );
+        initContentSettings( content.get() );
+        gui->addChild( std::move( content ) );
+
+    }
+
+    void GameMenu::initGameSettings( GUI *parent )
     {
 
     }
-    
-    void MainMenu::initOptions( GUI *gui )
+
+    void GameMenu::initWorldSettings( GUI *parent )
     {
-        int y_offset = 0;
-        // Button
-        std::unique_ptr< GUIButton > test1 = 
-            std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
-        test1->setText("\nTest 1");
-        test1->setAction( Menu::actionPush );
-        test1->setPush( test1.get() );
-        test1->setParent( gui );
-        gui->addChild( std::move( test1 ) );
 
-        // Button
-        std::unique_ptr< GUIButton > test2 = 
-            std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
-        test2->setText("\nTest 2");
-        test2->setAction( Menu::actionPush );
-        test2->setPush( test2.get() );
-        test2->setParent( gui );
-        gui->addChild( std::move( test2 ) );
+    }
 
-        // Button
-        std::unique_ptr< GUIButton > test3 = 
-            std::make_unique< GUIButton >( width/4, y_offset+=3, width/2, 3 );
-        test3->setText("\nTest 3");
-        test3->setAction( Menu::actionPush );
-        test3->setPush( test3.get() );
-        test3->setParent( gui );
-        gui->addChild( std::move( test3 ) );
+    void GameMenu::initContentSettings( GUI *parent )
+    {
+
     }
 
     void Menu::moveFocus( int direction )
@@ -128,7 +268,6 @@ namespace cursed
         if ( gui_stack.top().first->getChild( gui_stack.top().second + direction ) )
         {
             gui_stack.top().second += direction;
-            std::printf( "%d\n", gui_stack.top().second );
         }
     } 
 
@@ -180,7 +319,34 @@ namespace cursed
         Engine::closeGame();
     }
 
+    void Menu::actionMenu( GUI *origin )
+    {
+        emit( MAIN_MENU );
+    }
+
+    void Menu::actionSave( GUI *origin )
+    {
+        std::printf("Saving '%s'\n", origin->getText().c_str());
+    }
+
+    void Menu::actionLoad( GUI *origin )
+    {
+        std::printf("Loading from '%s'\n", origin->getText().c_str());
+    }
+
+    void AgreeMenu::render( TCODConsole *root )
+    {/* TODO: Implement this! */}
+
+    void AgreeMenu::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
+    {/* TODO: Implement this! */}
+
     void MainMenu::render( TCODConsole *root )
+    {/* TODO: Implement this! */}
+
+    void MainMenu::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
+    {/* TODO: Implement this! */}
+
+    void GameMenu::render( TCODConsole *root )
     {
         if ( root )
         {
@@ -204,7 +370,7 @@ namespace cursed
         }
     }
 
-    void MainMenu::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
+    void GameMenu::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
     {
         TCOD_keycode_t special_key = Engine::getCurrentKey().vk;
         int regular_key = Engine::getCurrentKey().c;
@@ -237,4 +403,27 @@ namespace cursed
         }
     }
 
+    void Menu::switchCurrentMenu( Menu *menu )
+    {
+        // Clear current menu
+        if ( current_focused_menu )
+        {
+            while ( current_focused_menu->popGUI() ) { }
+        }
+
+        // Clear next menu (Just in case), and switch to it
+        while ( menu->popGUI() ) { }
+        menu->enterMenu();
+        current_focused_menu = menu;
+    }
+
+    void Menu::updateCurrentMenu( TCOD_key_t &key, TCOD_mouse_t &mouse )
+    {
+        current_focused_menu->update( key, mouse );
+    }
+
+    void Menu::renderCurrentMenu( TCODConsole *console )
+    {
+        current_focused_menu->render( console );
+    }
 };
