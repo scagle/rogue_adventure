@@ -2,6 +2,10 @@
 
 #include "gui.hpp"
 
+#include "../enums/menu_action.hpp"
+#include "../enums/menu_type.hpp"
+#include "../enums/button_event.hpp"
+
 #include <memory>
 #include <utility>
 #include <libtcod/libtcod.hpp>
@@ -10,44 +14,40 @@
 
 namespace cursed
 {
-    enum ListenEvent
-    {
-        MAIN_MENU,
-    };
-
     class Menu : public TCODConsole
     {
-        // TODO: De staticify this class
-        private:
-        static std::vector< Menu* > instances;
+        public:
         static Menu *current_focused_menu;
         
         protected:
         int width, height;
-        static std::unique_ptr< GUI > root_gui; 
-        static std::stack< std::pair< GUI*, int > > gui_stack; // Stack of GUI's and their button indices
+        std::unique_ptr< GUI > root_gui; 
+        std::stack< std::pair< GUI*, int > > gui_stack; // Stack of GUI's and their button indices
         
         public:
         Menu( int width, int height );
         virtual ~Menu() { }
 
+        static std::vector< Menu* >& getInstances(); // Static Order Initialization Fiasco fix
+
         virtual void init() = 0;
-        virtual void listen( ListenEvent event ) = 0; // Listen for events
-        static void emit( ListenEvent event ); // Emit events
+        virtual void listen( ButtonEvent event ) = 0; // Listen for events
+        static void emit( ButtonEvent event ); // Emit events
 
-        static void actionResume( GUI* origin );
-        static void actionPush( GUI* origin );
-        static void actionExit( GUI* origin );
-        static void actionSave( GUI* origin );
-        static void actionLoad( GUI* origin );
-        static void actionMenu( GUI* origin );
+        void action( GUI *origin, MenuAction menu_action );
+        void actionResume( GUI* origin );
+        void actionPush( GUI* origin );
+        void actionExit( GUI* origin );
+        void actionSave( GUI* origin );
+        void actionLoad( GUI* origin );
+        void actionMenu( GUI* origin );
 
-        static bool popGUI();
-        static void pushGUI( GUI *gui );
-        static void moveFocus( int direction );
+        bool popGUI( bool prevent_exit = false );
+        void pushGUI( GUI *gui );
+        void moveFocus( int direction );
 
-        static void enterMenu() { if ( gui_stack.empty() ) pushGUI( root_gui.get() ); }
-        static void exitMenu( GUI* gui );
+        void enterMenu(); 
+        void exitMenu( GUI* gui );
 
         bool isEmpty() { return ( this->gui_stack.size() == 0 ); }
 
@@ -55,8 +55,9 @@ namespace cursed
         static void updateCurrentMenu( TCOD_key_t &key, TCOD_mouse_t &mouse );
         static void renderCurrentMenu( TCODConsole *console );
 
-        virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse ) = 0;
-        virtual void render( TCODConsole *console ) = 0;
+        protected:
+        virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
+        virtual void render( TCODConsole *console );
     };
 
     class AgreeMenu : public Menu
@@ -68,7 +69,7 @@ namespace cursed
         virtual ~AgreeMenu() { }
 
         virtual void init();
-        virtual void listen( ListenEvent event ); // Listen for events
+        virtual void listen( ButtonEvent event ); // Listen for events
 
         void initAgreeMenu( GUI *parent );
 
@@ -84,8 +85,10 @@ namespace cursed
         MainMenu( int width, int height );
         virtual ~MainMenu() { }
 
+        void initMainMenu( GUI *parent );
+
         virtual void init();
-        virtual void listen( ListenEvent event ); // Listen for events
+        virtual void listen( ButtonEvent event ); // Listen for events
 
         virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
         virtual void render( TCODConsole *console );
@@ -100,9 +103,8 @@ namespace cursed
         virtual ~GameMenu() { }
 
         virtual void init();
-        virtual void listen( ListenEvent event ); // Listen for events
+        virtual void listen( ButtonEvent event ); // Listen for events
 
-        void initMainMenu( GUI *parent );
         void initGameMenu( GUI *parent );
 
         void initSaveLoad( GUI *parent );
@@ -114,6 +116,7 @@ namespace cursed
         void initWorldSettings( GUI *parent );
         void initContentSettings( GUI *parent );
 
+        protected:
         virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
         virtual void render( TCODConsole *console );
 

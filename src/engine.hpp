@@ -33,7 +33,9 @@ namespace cursed
         static TCOD_key_t current_key;
         static TCOD_mouse_t current_mouse;
         static std::unique_ptr< Console > console;
+        static std::unique_ptr< AgreeMenu > agree_menu;
         static std::unique_ptr< MainMenu > main_menu;
+        static std::unique_ptr< GameMenu > game_menu;
         static Actor *player; // pointer to the unique_player in map
 
         public:
@@ -41,6 +43,7 @@ namespace cursed
         virtual ~Engine();
 
         void init();
+        void initMenus();
         void load();
         void save();
 
@@ -57,9 +60,16 @@ namespace cursed
         static TCOD_mouse_t& getCurrentMouse() { return current_mouse; }
         static GameStatus getState() { return game_state; }
         static Console& getConsole() { return *console; }
-        static MainMenu& getMainMenu() { return *main_menu; }
+        static AgreeMenu* getAgreeMenu() { return agree_menu.get(); }
+        static MainMenu* getMainMenu() { return main_menu.get(); }
+        static GameMenu* getGameMenu() { return game_menu.get(); }
         static bool isGameClosed() { return close_game; } 
 
+        static void spawnAgreeMenu();
+        static void spawnMainMenu(); 
+        static void spawnGameMenu(); 
+
+        static void returnState();
         static void setState( GameStatus state ); 
         static void setInDungeon( bool in_dungeon ) { world.setInDungeon( in_dungeon ); }
         static void closeGame() { close_game = true; } 

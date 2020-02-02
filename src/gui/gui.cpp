@@ -1,18 +1,13 @@
 #include "gui.hpp"
+#include "menu.hpp"
 
 namespace cursed
 {
     // Static Declaration
 
     // Constructors
-    GUI::GUI( int x, int y, int width, int height )
-        : bound({ x, y, width, height })
-    {
-        
-    }
-
-    GUIButton::GUIButton( int x, int y, int width, int height )
-        : GUI( x, y, width, height )
+    GUI::GUI( Menu *menu, int x, int y, int width, int height )
+        : menu(menu), bound({ x, y, width, height })
     {
         
     }
@@ -63,22 +58,31 @@ namespace cursed
         }
     }
 
-    void GUIButton::performAction()
+    GUI* GUI::getPressableChild( int child )
     {
-        if ( action )
+        int valid_child_count = 0;
+        int index = 0;
+        while ( index < children.size() )
         {
-            (*action)(this);
+            if ( children[index]->getPressComponent() )
+            {
+                // Since we start at zero, evaluate before incrementing
+                if ( valid_child_count == child )
+                {
+                    return children[index].get();
+                }
+                valid_child_count++;
+            }
+            index++;
         }
+
+        // Desired child couldn't be reached before the end of vector
+        return nullptr;
     }
 
-    // Updates only when selected
-    void GUIButton::update()
+    void GUI::press()
     {
-
-    }
-
-    void GUIButton::render( TCODConsole *console, bool is_parent, GUI *focused_gui )
-    {
-        GUI::render( console, is_parent, focused_gui );
+        if ( press_component )
+            menu->action( this, press_component->action );
     }
 };

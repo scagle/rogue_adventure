@@ -6,5 +6,7 @@ set(GUI_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/gui.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/menu.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/menu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/press_component.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/press_component.cpp
     PARENT_SCOPE
 )

@@ -2,13 +2,18 @@
 
 #include "camera.hpp"
 #include "options.hpp"
+
 #include "enums/game_status.hpp"
 #include "enums/container_type.hpp"
+#include "enums/menu_type.hpp"
+
 #include "datatypes/mouse.hpp"
+
 #include "character/actor.hpp"
 #include "character/behaviors/ai.hpp"
 #include "character/behaviors/attacker.hpp"
 #include "character/behaviors/destructible.hpp"
+
 #include "world/map.hpp"
 #include "world/world.hpp"
 
@@ -35,7 +40,9 @@ namespace cursed
     TCOD_key_t Engine::current_key;
     TCOD_mouse_t Engine::current_mouse;
     std::unique_ptr< Console > Engine::console;
+    std::unique_ptr< AgreeMenu > Engine::agree_menu;
     std::unique_ptr< MainMenu > Engine::main_menu;
+    std::unique_ptr< GameMenu > Engine::game_menu;
     Actor *Engine::player = nullptr;
 
     // Constructors
@@ -62,9 +69,12 @@ namespace cursed
     {
         // Create console
         console = std::make_unique< Console >( screen_width, 20 );
+        
+        // Initialize Menus
+        initMenus(); 
 
-        // create main menu
-        main_menu = std::make_unique< MainMenu >( screen_width, screen_height );
+        // Start out in AgreeMenu
+        spawnAgreeMenu();
 
         // Character Creation
         std::unique_ptr< Actor > unique_player = 
@@ -91,6 +101,18 @@ namespace cursed
         current_area->add( CREATURES, std::move( unique_player ) );
     }
 
+    void Engine::initMenus()
+    {
+        // Create Main Menu
+        agree_menu = std::make_unique< AgreeMenu >( screen_width, screen_height );
+
+        // Create Main Menu
+        main_menu = std::make_unique< MainMenu >( screen_width, screen_height );
+
+        // Create Game Menu
+        game_menu = std::make_unique< GameMenu >( screen_width, screen_height );
+    }
+
     void Engine::load()
     {
 
@@ -101,6 +123,31 @@ namespace cursed
 
     }
 
+    void Engine::spawnAgreeMenu()
+    {
+        Menu::switchCurrentMenu( agree_menu.get() );
+        Engine::setState( MENU );
+    }
+
+    void Engine::spawnMainMenu()
+    {
+        Menu::switchCurrentMenu( main_menu.get() );
+        Engine::setState( MENU );
+    }
+
+    void Engine::spawnGameMenu()
+    {
+        Menu::switchCurrentMenu( game_menu.get() );
+        Engine::setState( MENU );
+    }
+
+    void Engine::returnState()
+    {
+        game_state = IDLE;
+//      GameStatus temp = temp_state;
+//      temp_state = game_state;
+//      game_state = temp;
+    }
     void Engine::setState( GameStatus state )
     {
         // Handle special cases 
@@ -112,6 +159,7 @@ namespace cursed
                 break;
         }
 
+//      temp_state = game_state;
         game_state = state;
     }
 
@@ -230,16 +278,16 @@ namespace cursed
     {
         if ( game_state == MENU )
         {
-            main_menu->enterMenu(); // Add root gui onto gui stack
-            while ( ! main_menu->isEmpty() && game_state == MENU && !( TCODConsole::isWindowClosed() ) )
+            while ( game_state == MENU && !( TCODConsole::isWindowClosed() ) )
             {
-                main_menu->render( TCODConsole::root );
+                TCODConsole::root->clear();
+                Menu::renderCurrentMenu( TCODConsole::root );
                 flush();
                 TCODSystem::waitForEvent( TCOD_EVENT_KEY_PRESS|TCOD_EVENT_MOUSE, 
                     &current_key, &current_mouse, true);
-                main_menu->update( current_key, current_mouse );
+                Menu::updateCurrentMenu( current_key, current_mouse );
             }
-            setState( temp_state ); // return to previous state
+            returnState(); // return to previous state
             return;
         }
         if ( game_state == STARTUP )
@@ -262,6 +310,7 @@ namespace cursed
         // Handle Special Keys
         if ( current_key.vk == Options::getOptions().MENU )
         {
+            spawnGameMenu();
             Engine::setState( MENU );
         }
 
