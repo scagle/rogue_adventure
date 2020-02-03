@@ -23,6 +23,7 @@ namespace cursed
         int width, height;
         std::unique_ptr< GUI > root_gui; 
         std::stack< std::pair< GUI*, int > > gui_stack; // Stack of GUI's and their button indices
+        bool escapable = true;
         
         public:
         Menu( int width, int height );
@@ -35,12 +36,14 @@ namespace cursed
         static void emit( ButtonEvent event ); // Emit events
 
         void action( GUI *origin, MenuAction menu_action );
+        void actionExit( GUI* origin );
         void actionResume( GUI* origin );
         void actionPush( GUI* origin );
-        void actionExit( GUI* origin );
+        void actionPop( GUI* origin );
+        void actionFocusInput( GUI* origin );
+        void actionMainMenu( GUI* origin );
         void actionSave( GUI* origin );
         void actionLoad( GUI* origin );
-        void actionMenu( GUI* origin );
 
         bool popGUI( bool prevent_exit = false );
         void pushGUI( GUI *gui );
@@ -50,6 +53,7 @@ namespace cursed
         void exitMenu( GUI* gui );
 
         bool isEmpty() { return ( this->gui_stack.size() == 0 ); }
+        void setEscapable( bool escapable ) { this->escapable = escapable; }
 
         static void switchCurrentMenu( Menu *menu );  // Switch to new menu
         static void updateCurrentMenu( TCOD_key_t &key, TCOD_mouse_t &mouse );
@@ -86,6 +90,7 @@ namespace cursed
         virtual ~MainMenu() { }
 
         void initMainMenu( GUI *parent );
+        void initNewCharacter( GUI *parent );
 
         virtual void init();
         virtual void listen( ButtonEvent event ); // Listen for events

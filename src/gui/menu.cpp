@@ -22,12 +22,14 @@ namespace cursed
     AgreeMenu::AgreeMenu( int width, int height )
         : Menu( width, height )
     {
+        setEscapable(false);
         init();
     }
 
     MainMenu::MainMenu( int width, int height )
         : Menu( width, height )
     {
+        setEscapable(false);
         init();
     }
 
@@ -111,15 +113,13 @@ namespace cursed
         std::unique_ptr< GUI > text = 
             std::make_unique< GUI >( this, 1, 1, width-3, height - 5 );
         text->setText("This is my game it is so great I love everything about it ommmmmgooooshhhhh it is so good this message is such a substantial long message that I hope the text will wrap many many many many times before ending. I need you to agree with me. HERES_A_REALLY_LONG_WORD_I_WANT_TO_SEE_GET_WRAPPED_SOMEHOW_IDK_IF_THIS_WILL_WORK_AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-        text->setParent( gui );
         gui->addChild( std::move( text ) );
         
         // Agree Button
         std::unique_ptr< GUI > agree = 
             std::make_unique< GUI >( this, width/4, height-3, width/2, 3 );
         agree->setText("\nAgree");
-        agree->setPressComponent( nullptr, MenuAction::MENU );
-        agree->setParent( gui );
+        agree->setPressComponent( nullptr, MenuAction::MAIN_MENU );
         gui->addChild( std::move( agree ) );
     }
 
@@ -130,8 +130,8 @@ namespace cursed
         std::unique_ptr< GUI > character = 
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         character->setText("\nNew Character");
-        character->setPressComponent( nullptr, MenuAction::NEW_CHARACTER );
-        character->setParent( gui );
+        character->setPressComponent( character.get(), MenuAction::PUSH );
+        initNewCharacter( character.get() );
         gui->addChild( std::move( character ) );
 
         // Continue Button
@@ -139,7 +139,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         resume->setText("\nContinue");
         resume->setPressComponent( nullptr, MenuAction::RESUME );
-        resume->setParent( gui );
         gui->addChild( std::move( resume ) );
 
         // Load Button
@@ -147,7 +146,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         load->setText("\nLoad");
         load->setPressComponent( load.get(), MenuAction::PUSH );
-        load->setParent( gui );
         //initSaveLoad( load.get() );
         gui->addChild( std::move( load ) );
 
@@ -156,7 +154,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         settings->setText("\nSettings");
         settings->setPressComponent( settings.get(), MenuAction::PUSH );
-        settings->setParent( gui );
         //initSettings( settings.get() );
         gui->addChild( std::move( settings ) );
 
@@ -165,8 +162,35 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         exit->setText("\nExit Game");
         exit->setPressComponent( nullptr, MenuAction::EXIT );
-        exit->setParent( gui );
         gui->addChild( std::move( exit ) );
+    }
+
+    void MainMenu::initNewCharacter( GUI *gui )
+    {
+        int y_offset = 0;
+        // Name Input
+        y_offset = 6;
+        std::unique_ptr< GUI > name_input = 
+            std::make_unique< GUI >( this, width/4, y_offset, width/2, 3 );
+        name_input->setInputComponent( );
+
+        y_offset = 2;
+        std::unique_ptr< GUI > name_option = 
+            std::make_unique< GUI >( this, width/4, y_offset, width/2, 3 );
+        name_option->setText("\nName");
+        name_option->setPressComponent( name_input.get(), MenuAction::FOCUS_INPUT );
+
+        gui->addChild( std::move( name_option ) );
+        gui->addChild( std::move( name_input ) );
+        y_offset = 7;
+
+        // Back button
+        std::unique_ptr< GUI > back = 
+            std::make_unique< GUI >( this, width/4, y_offset, width/2, 3 );
+        back->setText("\nBack");
+        back->setPressComponent( nullptr, MenuAction::POP );
+        gui->addChild( std::move( back ) );
+
     }
 
     void GameMenu::initGameMenu( GUI *gui )
@@ -177,7 +201,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         resume->setText("\nResume");
         resume->setPressComponent( nullptr, MenuAction::RESUME );
-        resume->setParent( gui );
         gui->addChild( std::move( resume ) );
 
         // Save / Load Button
@@ -185,7 +208,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         saveload->setText("\nSave / Load");
         saveload->setPressComponent( saveload.get(), MenuAction::PUSH );
-        saveload->setParent( gui );
         initSaveLoad( saveload.get() );
         gui->addChild( std::move( saveload ) );
 
@@ -194,7 +216,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         settings->setText("\nSettings");
         settings->setPressComponent( settings.get(), MenuAction::PUSH );
-        settings->setParent( gui );
         initSettings( settings.get() );
         gui->addChild( std::move( settings ) );
 
@@ -202,8 +223,7 @@ namespace cursed
         std::unique_ptr< GUI > exit = 
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         exit->setText("\nExit To Main Menu");
-        exit->setPressComponent( nullptr, MenuAction::MENU );
-        exit->setParent( gui );
+        exit->setPressComponent( nullptr, MenuAction::MAIN_MENU );
         gui->addChild( std::move( exit ) );
     }
 
@@ -215,7 +235,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         save->setText("\nSave");
         save->setPressComponent( save.get(), MenuAction::PUSH );
-        save->setParent( gui );
         initSave( save.get() );
         gui->addChild( std::move( save ) );
 
@@ -224,7 +243,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         load->setText("\nLoad");
         load->setPressComponent( load.get(), MenuAction::PUSH );
-        load->setParent( gui );
         initLoad( load.get() );
         gui->addChild( std::move( load ) );
     }
@@ -239,7 +257,6 @@ namespace cursed
                 std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
             save->setText("\nSave " + std::to_string( i+1 ));
             save->setPressComponent( nullptr, MenuAction::SAVE );
-            save->setParent( gui );
             gui->addChild( std::move( save ) );
         }
     }
@@ -254,7 +271,6 @@ namespace cursed
                 std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
             load->setText("\nLoad " + std::to_string( i+1 ));
             load->setPressComponent( nullptr, MenuAction::LOAD );
-            load->setParent( gui );
             gui->addChild( std::move( load ) );
         }
     }
@@ -267,7 +283,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         game->setText("\nGame Settings");
         game->setPressComponent( game.get(), MenuAction::PUSH );
-        game->setParent( gui );
         initGameSettings( game.get() );
         gui->addChild( std::move( game ) );
 
@@ -276,7 +291,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         world->setText("\nWorld Settings");
         world->setPressComponent( world.get(), MenuAction::PUSH );
-        world->setParent( gui );
         initWorldSettings( world.get() );
         gui->addChild( std::move( world ) );
 
@@ -285,7 +299,6 @@ namespace cursed
             std::make_unique< GUI >( this, width/4, y_offset+=3, width/2, 3 );
         content->setText("\nContent Settings");
         content->setPressComponent( content.get(), MenuAction::PUSH );
-        content->setParent( gui );
         initContentSettings( content.get() );
         gui->addChild( std::move( content ) );
     }
@@ -381,28 +394,43 @@ namespace cursed
     {
         switch ( menu_action )
         {
-            case MenuAction::RESUME:
-                actionResume( origin );
-                break;
-            case MenuAction::PUSH:
-                actionPush( origin );
-                break;
-            case MenuAction::EXIT:
+            case MenuAction::EXIT:        // Exit game
                 actionExit( origin );
                 break;
-            case MenuAction::MENU:
-                actionMenu( origin );
+            case MenuAction::RESUME:      // Resume game
+                actionResume( origin );
                 break;
-            case MenuAction::SAVE:
+
+            case MenuAction::PUSH:        // Push a GUI to the gui_stack (descend down hierarchy)
+                actionPush( origin );
+                break;
+            case MenuAction::POP:         // Pop a GUI from the gui_stack (ascend up hierarchy)
+                actionPop( origin );
+                break;
+            case MenuAction::FOCUS_INPUT: // Focus specific input above all else
+                actionFocusInput( origin );
+                break;
+
+            case MenuAction::MAIN_MENU:   // Switch to Main Menu
+                actionMainMenu( origin );
+                break;
+
+            case MenuAction::SAVE:        // Save Game at Slot #
                 actionSave( origin );
                 break;
-            case MenuAction::LOAD:
+            case MenuAction::LOAD:        // Load Game at Slot #
                 actionLoad( origin );
                 break;
             default:
                 std::printf("*** WARNING: Unknown action! (menu.cpp)\n");
                 break;
         }
+    }
+
+    void Menu::actionExit( GUI *origin )
+    {
+        Engine::setState( IDLE );
+        Engine::closeGame();
     }
 
     void Menu::actionResume( GUI *origin )
@@ -412,16 +440,20 @@ namespace cursed
 
     void Menu::actionPush( GUI *origin )
     {
-        pushGUI( origin->getPush() );
+        pushGUI( origin->getPressComponent()->target );
     }
 
-    void Menu::actionExit( GUI *origin )
+    void Menu::actionPop( GUI *origin )
     {
-        Engine::setState( IDLE );
-        Engine::closeGame();
+        popGUI();
     }
 
-    void Menu::actionMenu( GUI *origin )
+    void Menu::actionFocusInput( GUI *origin )
+    {
+        std::printf("*** WARNING: WTH do you want me to do!? (menu.cpp)\n");
+    }
+
+    void Menu::actionMainMenu( GUI *origin )
     {
         emit( ButtonEvent::MAIN_MENU );
     }
@@ -500,7 +532,10 @@ namespace cursed
         // Special Keys
         if ( special_key == Options::getOptions().MENU )
         {
-            popGUI(); 
+            if ( escapable || gui_stack.size() > 1 )
+            {
+                popGUI(); 
+            }
         }
         else if ( special_key == Options::getOptions().MENU_SELECT )
         {

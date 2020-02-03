@@ -8,5 +8,7 @@ set(GUI_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/menu.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/press_component.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/press_component.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input_component.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/input_component.cpp
     PARENT_SCOPE
 )

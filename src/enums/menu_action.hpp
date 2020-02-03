@@ -4,12 +4,16 @@ namespace cursed
 {
     enum class MenuAction
     {
-        RESUME,
-        PUSH,
-        EXIT,
-        MENU,
-        SAVE,
-        LOAD,
-        NEW_CHARACTER,
+        EXIT,        // Exit game
+        RESUME,      // Resume game
+
+        PUSH,        // Push a GUI to the gui_stack (descend down hierarchy)
+        POP,         // Pop a GUI from the gui_stack (ascend up hierarchy)
+        FOCUS_INPUT, // Focus specific input above all else
+
+        MAIN_MENU,   // Switch to Main Menu
+
+        SAVE,        // Save Game at Slot #
+        LOAD,        // Load Game at Slot #
     };
 };

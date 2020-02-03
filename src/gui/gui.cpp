@@ -13,15 +13,15 @@ namespace cursed
     }
 
     // Methods
-    bool GUI::grabNextChild( std::pair< GUI*, int >* focus, int new_index )
-    {
-        if ( new_index >= 0 && new_index < children.size() )
-        {
-            *focus = { getChild(new_index), new_index };
-            return true;
-        }
-        return false;
-    }
+//  bool GUI::grabNextChild( std::pair< GUI*, int >* focus, int new_index )
+//  {
+//      if ( new_index >= 0 && new_index < children.size() )
+//      {
+//          *focus = { getChild(new_index), new_index };
+//          return true;
+//      }
+//      return false;
+//  }
 
     void GUI::update()
     {
