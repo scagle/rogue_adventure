@@ -12,6 +12,24 @@ namespace cursed
         
     }
 
+    TextGUI::TextGUI( Menu *menu, int x, int y, int width, int height )
+        : GUI(menu, x, y, width, height), Textable()
+    {
+        
+    }
+
+    ButtonGUI::ButtonGUI( Menu *menu, int x, int y, int width, int height )
+        : GUI(menu, x, y, width, height), Textable(), Pressable()
+    {
+        
+    }
+
+    InputGUI::InputGUI( Menu *menu, int x, int y, int width, int height )
+        : GUI(menu, x, y, width, height), Textable(), Pressable(), Focusable()
+    {
+        
+    }
+
     // Methods
 //  bool GUI::grabNextChild( std::pair< GUI*, int >* focus, int new_index )
 //  {
@@ -28,33 +46,98 @@ namespace cursed
         
     }
 
+    void TextGUI::update()
+    {
+        
+    }
+
+    void ButtonGUI::update()
+    {
+        
+    }
+
+    void InputGUI::update()
+    {
+        
+    }
+
+    void TextGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
+    {
+        if ( is_parent )
+        {
+            GUI::render( console, is_parent, focused_gui );
+            return;
+        }
+
+        Bound cbound = bound.getCentered();
+        console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
+            TCOD_BKGND_NONE, TCOD_CENTER, getText().c_str() );
+    }
+
+    void ButtonGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
+    {
+        if ( is_parent )
+        {
+            GUI::render( console, is_parent, focused_gui );
+            return;
+        }
+
+        if ( focused_gui == this ) 
+        {
+            TCODColor old_color = console->getDefaultBackground();
+            console->setDefaultBackground( getSelectedColor() );
+            console->rect( bound.x, bound.y, bound.w, bound.h, true, TCOD_BKGND_SET );
+            console->setDefaultBackground( old_color );
+        }
+
+        Bound cbound = bound.getCentered();
+        console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
+            TCOD_BKGND_NONE, TCOD_CENTER, getText().c_str() );
+    }
+
+    void InputGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
+    {
+        if ( is_parent )
+        {
+            GUI::render( console, is_parent, focused_gui );
+            return;
+        }
+
+        if ( !isFocused() && focused_gui == this ) 
+        {
+            TCODColor old_color = console->getDefaultBackground();
+            console->setDefaultBackground( getSelectedColor() );
+            console->rect( bound.x, bound.y, bound.w, bound.h, true, TCOD_BKGND_SET );
+            console->setDefaultBackground( old_color );
+        }
+        
+        if ( isFocused() )
+        {
+            TCODColor old_color = console->getDefaultBackground();
+            console->setDefaultBackground( getFocusColor() );
+            console->rect( bound.x, bound.y, 3, 3, true, TCOD_BKGND_SET );
+            console->rect( bound.x + bound.w - 3, bound.y, 3, 3, true, TCOD_BKGND_SET );
+            console->printRectEx( bound.x+1, bound.y+1, 1, 1, 
+                TCOD_BKGND_NONE, TCOD_CENTER, "-" );
+            console->printRectEx( bound.x + bound.w - 2, bound.y+1, 1, 1, 
+                TCOD_BKGND_NONE, TCOD_CENTER, "+" );
+            console->setDefaultBackground( old_color );
+        }
+
+        Bound cbound = bound.getCentered();
+        console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
+            TCOD_BKGND_NONE, TCOD_CENTER, getText().c_str() );
+    }
+
     void GUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
     {
-        // See if we're focused
-        if ( is_parent == false )
-        {
-            if ( focused_gui == this ) 
-            {
-                TCODColor old_color = console->getDefaultBackground();
-                console->setDefaultBackground( TCODColor::purple );
-                console->rect( bound.x, bound.y, bound.w, bound.h, true, TCOD_BKGND_SET );
-                console->setDefaultBackground( old_color );
-            }
+        // Print the frame of parent gui
+        console->printFrame( 0, 0, console->getWidth(), console->getHeight(), true, TCOD_BKGND_DEFAULT, title.c_str() );
 
-            Bound cbound = bound.getCentered();
-            console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
-                TCOD_BKGND_NONE, TCOD_CENTER, text.c_str() );
-        }
-        else
+        // Render all children
+        for ( auto&& child : children )
         {
-            // Print the frame of parent gui
-            console->printFrame( 0, 0, console->getWidth(), console->getHeight(), true, TCOD_BKGND_DEFAULT, text.c_str() );
-
-            // Render all children
-            for ( auto&& child : children )
-            {
-                child->render( console, false, focused_gui );
-            }
+            child->render( console, false, focused_gui );
         }
     }
 
@@ -64,7 +147,7 @@ namespace cursed
         int index = 0;
         while ( index < children.size() )
         {
-            if ( children[index]->getPressComponent() )
+            if ( children[index]->isPressable() )
             {
                 // Since we start at zero, evaluate before incrementing
                 if ( valid_child_count == child )
@@ -80,9 +163,8 @@ namespace cursed
         return nullptr;
     }
 
-    void GUI::press()
+    void ButtonGUI::press()
     {
-        if ( press_component )
-            menu->action( this, press_component->action );
+        menu->action( this, getAction() );
     }
 };

@@ -35,15 +35,15 @@ namespace cursed
         virtual void listen( ButtonEvent event ) = 0; // Listen for events
         static void emit( ButtonEvent event ); // Emit events
 
-        void action( GUI *origin, MenuAction menu_action );
-        void actionExit( GUI* origin );
-        void actionResume( GUI* origin );
-        void actionPush( GUI* origin );
-        void actionPop( GUI* origin );
-        void actionFocusInput( GUI* origin );
-        void actionMainMenu( GUI* origin );
-        void actionSave( GUI* origin );
-        void actionLoad( GUI* origin );
+        void action( ButtonGUI *origin, MenuAction menu_action );
+        void actionExit( ButtonGUI* origin );
+        void actionResume( ButtonGUI* origin );
+        void actionPush( ButtonGUI* origin );
+        void actionPop( ButtonGUI* origin );
+        void actionFocusInput( ButtonGUI* origin );
+        void actionMainMenu( ButtonGUI* origin );
+        void actionSave( ButtonGUI* origin );
+        void actionLoad( ButtonGUI* origin );
 
         bool popGUI( bool prevent_exit = false );
         void pushGUI( GUI *gui );

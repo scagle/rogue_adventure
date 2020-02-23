@@ -4,6 +4,8 @@ namespace cursed
 {
     enum class MenuAction
     {
+        NOTHING,     // Do nothing
+
         EXIT,        // Exit game
         RESUME,      // Resume game
 

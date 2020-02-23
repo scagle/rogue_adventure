@@ -1,11 +1,11 @@
-#include "input_component.hpp"
+#include "focusable.hpp"
 
 namespace cursed
 {
     // Static Declaration
 
     // Constructors
-    InputComponent::InputComponent()
+    Focusable::Focusable()
     {
         
     }
