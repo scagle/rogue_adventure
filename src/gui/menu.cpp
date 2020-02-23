@@ -131,6 +131,7 @@ namespace cursed
         std::unique_ptr< ButtonGUI > character = 
             std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
         character->setText("\nNew Character");
+        character->setTitle("Character Creation");
         character->setTarget( character.get() );
         character->setAction( MenuAction::PUSH );
         initNewCharacter( character.get() );
@@ -147,6 +148,7 @@ namespace cursed
         std::unique_ptr< ButtonGUI > load = 
             std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
         load->setText("\nLoad");
+        load->setTitle("Load Games");
         load->setTarget( load.get() );
         load->setAction( MenuAction::PUSH );
         //initSaveLoad( load.get() );
@@ -156,6 +158,7 @@ namespace cursed
         std::unique_ptr< ButtonGUI > settings = 
             std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
         settings->setText("\nSettings");
+        settings->setTitle("Settings");
         settings->setTarget( settings.get() );
         settings->setAction( MenuAction::PUSH );
         //initSettings( settings.get() );
@@ -177,6 +180,24 @@ namespace cursed
             std::make_unique< TextInputGUI >( this, width/4, y_offset+=3, width/2, 3 );
         name_input->setText("\nName");
         gui->addChild( std::move( name_input ) );
+
+        // Strength Input
+        std::unique_ptr< SliderGUI > str_input = 
+            std::make_unique< SliderGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        str_input->setText("\nStrength");
+        gui->addChild( std::move( str_input ) );
+
+        // Dexterity Input
+        std::unique_ptr< SliderGUI > dex_input = 
+            std::make_unique< SliderGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        dex_input->setText("\nDexterity");
+        gui->addChild( std::move( dex_input ) );
+
+        // Wisdom Input
+        std::unique_ptr< SliderGUI > wis_input = 
+            std::make_unique< SliderGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        wis_input->setText("\nWisdom");
+        gui->addChild( std::move( wis_input ) );
 
         // Back button
         std::unique_ptr< ButtonGUI > back = 

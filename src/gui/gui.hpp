@@ -96,6 +96,19 @@ namespace cursed
     class SliderGUI : public GUI, public Textable, public Pressable, public Focusable
     {
         public:
+        enum class SliderType
+        {
+            COUNT,
+            RANGE,
+        };
+
+        private:
+        int input_value = 0;
+        int input_min = 0;
+        int input_max = 10;
+        SliderType slider_type = SliderType::RANGE;
+
+        public:
         SliderGUI( Menu *menu, int x, int y, int width, int height );
         virtual ~SliderGUI() { }
 
@@ -107,9 +120,13 @@ namespace cursed
         virtual bool isPressable() { return true; }
         virtual bool isFocusable() { return true; }
 
+        virtual void setSliderType( SliderType slider_type ) { this->slider_type = slider_type; }
+        virtual SliderType getSliderType() { return this->slider_type; }
+
         virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
         virtual void render( TCODConsole *console, bool is_parent, GUI* focused_gui );
         void renderFocused( TCODConsole *console );
+        void renderNotFocused( TCODConsole *console );
     };
 
     class TextInputGUI : public GUI, public Textable, public Pressable, public Focusable

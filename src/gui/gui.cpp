@@ -1,5 +1,7 @@
 #include "gui.hpp"
+
 #include "menu.hpp"
+#include "../options.hpp"
 
 namespace cursed
 {
@@ -64,7 +66,28 @@ namespace cursed
 
     void SliderGUI::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
     {
-        
+        TCOD_keycode_t special_key = key.vk;
+        int regular_key = key.c;
+
+        // Regular Keys
+        if ( regular_key == Options::getOptions().LEFT )
+        {
+            if ( input_value > input_min )
+            {
+                input_value -= 1;
+                if ( input_value < input_min )
+                    input_value = input_min;
+            }
+        }
+        else if (regular_key == Options::getOptions().RIGHT ) 
+        {
+            if ( input_value < input_max )
+            {
+                input_value += 1;
+                if ( input_value > input_max )
+                    input_value = input_max;
+            }
+        }
     }
 
     void TextInputGUI::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
@@ -72,29 +95,18 @@ namespace cursed
         TCOD_keycode_t special_key = key.vk;
         int regular_key = key.c;
 
-        // Special Keys
-//      if ( special_key == Options::getOptions().MENU ||
-//           special_key == Options::getOptions().MENU_SELECT )
-//      {
-//          escaped = true;
-//      }
-
         // Regular Keys
-        if ( regular_key != 0 )
+        if ( regular_key >= 33 && regular_key <= 126 ) 
         {
-            if ( regular_key == 8 )
+            input_text.append( 1, regular_key );
+        }
+        else if ( regular_key == 8 )
+        {
+            if ( ! input_text.empty())
             {
-                if ( ! input_text.empty())
-                {
-                    input_text.pop_back();
-                }
-            }
-            else if ( regular_key >= 33 && regular_key <= 126 ) 
-            {
-                input_text.append( 1, regular_key );
+                input_text.pop_back();
             }
         }
-//      escaped = false;
     }
 
     void TextGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
@@ -141,8 +153,11 @@ namespace cursed
         {
             renderFocused( console );
         }
-
-        Textable::render( console, this );
+        else
+        {
+            renderNotFocused( console );
+            Textable::render( console, this );
+        }
     }
 
     void TextInputGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
@@ -190,8 +205,34 @@ namespace cursed
             TCOD_BKGND_NONE, TCOD_CENTER, "-" );
         console->printRectEx( bound.x + bound.w - 2, bound.y+1, 1, 1, 
             TCOD_BKGND_NONE, TCOD_CENTER, "+" );
+
+        if ( slider_type == SliderType::RANGE )
+        {
+            console->setDefaultBackground( TCODColor::lightPurple );
+            console->rect( bound.x+3, bound.y, static_cast<int>( (bound.w-6) * ( input_value / (float)input_max ) ), 3, true, TCOD_BKGND_SET );
+        }
         console->setDefaultBackground( old_color );
+
+        Bound cbound = bound.getCentered();
+        console->printRectEx( cbound.x, cbound.y+1, cbound.w, cbound.h, 
+            TCOD_BKGND_NONE, TCOD_CENTER, std::to_string(input_value).c_str() );
     }
+
+    void SliderGUI::renderNotFocused( TCODConsole *console )
+    {
+        TCODColor old_color = console->getDefaultBackground();
+        if ( slider_type == SliderType::RANGE )
+        {
+            console->setDefaultBackground( TCODColor::darkBlue );
+            console->rect( bound.x+3, bound.y, static_cast<int>( (bound.w-6) * ( input_value / (float)input_max ) ), 3, true, TCOD_BKGND_SET );
+        }
+        console->setDefaultBackground( old_color );
+
+        Bound cbound = bound.getCentered();
+        console->printRectEx( cbound.x, cbound.y+2, cbound.w, cbound.h, 
+            TCOD_BKGND_NONE, TCOD_CENTER, std::to_string(input_value).c_str() );
+    }
+
 
     void TextInputGUI::renderFocused( TCODConsole *console )
     {
