@@ -7,6 +7,7 @@ namespace cursed
         BASE,
         TEXT,
         BUTTON,
-        INPUT,
+        SLIDER,
+        TEXTINPUT,
     };
 };

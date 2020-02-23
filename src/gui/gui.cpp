@@ -24,7 +24,13 @@ namespace cursed
         
     }
 
-    InputGUI::InputGUI( Menu *menu, int x, int y, int width, int height )
+    SliderGUI::SliderGUI( Menu *menu, int x, int y, int width, int height )
+        : GUI(menu, x, y, width, height), Textable(), Pressable(), Focusable()
+    {
+        
+    }
+
+    TextInputGUI::TextInputGUI( Menu *menu, int x, int y, int width, int height )
         : GUI(menu, x, y, width, height), Textable(), Pressable(), Focusable()
     {
         
@@ -41,24 +47,29 @@ namespace cursed
 //      return false;
 //  }
 
-    void GUI::update()
+    void GUI::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
     {
         
     }
 
-    void TextGUI::update()
+    void TextGUI::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
     {
         
     }
 
-    void ButtonGUI::update()
+    void ButtonGUI::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
     {
         
     }
 
-    void InputGUI::update()
+    void SliderGUI::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
     {
         
+    }
+
+    void TextInputGUI::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
+    {
+                
     }
 
     void TextGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
@@ -69,9 +80,7 @@ namespace cursed
             return;
         }
 
-        Bound cbound = bound.getCentered();
-        console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
-            TCOD_BKGND_NONE, TCOD_CENTER, getText().c_str() );
+        Textable::render( console, this );
     }
 
     void ButtonGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
@@ -84,18 +93,13 @@ namespace cursed
 
         if ( focused_gui == this ) 
         {
-            TCODColor old_color = console->getDefaultBackground();
-            console->setDefaultBackground( getSelectedColor() );
-            console->rect( bound.x, bound.y, bound.w, bound.h, true, TCOD_BKGND_SET );
-            console->setDefaultBackground( old_color );
+            Pressable::render( console, this );
         }
 
-        Bound cbound = bound.getCentered();
-        console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
-            TCOD_BKGND_NONE, TCOD_CENTER, getText().c_str() );
+        Textable::render( console, this );
     }
 
-    void InputGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
+    void SliderGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
     {
         if ( is_parent )
         {
@@ -103,30 +107,40 @@ namespace cursed
             return;
         }
 
-        if ( !isFocused() && focused_gui == this ) 
+        if ( !Focusable::isFocused() && focused_gui == this ) 
         {
-            TCODColor old_color = console->getDefaultBackground();
-            console->setDefaultBackground( getSelectedColor() );
-            console->rect( bound.x, bound.y, bound.w, bound.h, true, TCOD_BKGND_SET );
-            console->setDefaultBackground( old_color );
+            Pressable::render( console, this );
         }
         
-        if ( isFocused() )
+        if ( Focusable::isFocused() )
         {
-            TCODColor old_color = console->getDefaultBackground();
-            console->setDefaultBackground( getFocusColor() );
-            console->rect( bound.x, bound.y, 3, 3, true, TCOD_BKGND_SET );
-            console->rect( bound.x + bound.w - 3, bound.y, 3, 3, true, TCOD_BKGND_SET );
-            console->printRectEx( bound.x+1, bound.y+1, 1, 1, 
-                TCOD_BKGND_NONE, TCOD_CENTER, "-" );
-            console->printRectEx( bound.x + bound.w - 2, bound.y+1, 1, 1, 
-                TCOD_BKGND_NONE, TCOD_CENTER, "+" );
-            console->setDefaultBackground( old_color );
+            renderFocused( console );
         }
 
-        Bound cbound = bound.getCentered();
-        console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
-            TCOD_BKGND_NONE, TCOD_CENTER, getText().c_str() );
+        Textable::render( console, this );
+    }
+
+    void TextInputGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
+    {
+        if ( is_parent )
+        {
+            GUI::render( console, is_parent, focused_gui );
+            return;
+        }
+
+        if ( !Focusable::isFocused() && focused_gui == this ) 
+        {
+            Pressable::render( console, this );
+        }
+        
+        if ( Focusable::isFocused() )
+        {
+            renderFocused( console );
+        }
+        else
+        {
+            Textable::render( console, this );
+        }
     }
 
     void GUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
@@ -139,6 +153,27 @@ namespace cursed
         {
             child->render( console, false, focused_gui );
         }
+    }
+
+    void SliderGUI::renderFocused( TCODConsole *console )
+    {
+        TCODColor old_color = console->getDefaultBackground();
+        console->setDefaultBackground( getFocusColor() );
+        console->rect( bound.x, bound.y, 3, 3, true, TCOD_BKGND_SET );
+        console->rect( bound.x + bound.w - 3, bound.y, 3, 3, true, TCOD_BKGND_SET );
+        console->printRectEx( bound.x+1, bound.y+1, 1, 1, 
+            TCOD_BKGND_NONE, TCOD_CENTER, "-" );
+        console->printRectEx( bound.x + bound.w - 2, bound.y+1, 1, 1, 
+            TCOD_BKGND_NONE, TCOD_CENTER, "+" );
+        console->setDefaultBackground( old_color );
+    }
+
+    void TextInputGUI::renderFocused( TCODConsole *console )
+    {
+        TCODColor old_color = console->getDefaultBackground();
+        console->setDefaultBackground( TCODColor::darkGrey );
+        console->rect( bound.x, bound.y, bound.w, bound.h, true, TCOD_BKGND_SET );
+        console->setDefaultBackground( old_color );
     }
 
     GUI* GUI::getPressableChild( int child )
@@ -163,8 +198,18 @@ namespace cursed
         return nullptr;
     }
 
-    void ButtonGUI::press()
+    void ButtonGUI::select()
     {
         menu->action( this, getAction() );
+    }
+
+    void SliderGUI::select()
+    {
+        toggleFocus(); 
+    }
+
+    void TextInputGUI::select()
+    {
+        toggleFocus(); 
     }
 };

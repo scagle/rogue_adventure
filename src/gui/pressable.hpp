@@ -30,5 +30,8 @@ namespace cursed
         virtual void setAction( MenuAction action ) { this->action = action; } 
 
         virtual bool isPressable() { return this->enabled; } 
+
+        void update( GUI *owner );
+        void render( TCODConsole *console, GUI *owner );
     };
 };

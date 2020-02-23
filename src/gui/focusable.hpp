@@ -1,5 +1,10 @@
 #pragma once
 
+namespace cursed
+{
+    class GUI;
+};
+
 #include <libtcod/libtcod.hpp>
 
 namespace cursed
@@ -16,6 +21,9 @@ namespace cursed
         TCODColor getFocusColor() { return this->focus_color; }
         void setFocus( bool focus ) { this->focus = focus; }
         void toggleFocus() { this->focus ^= true; }
-        bool isFocused() { return this->focus; }
+        virtual bool isFocused() { return this->focus; }
+
+        void update( GUI *owner );
+        void render( TCODConsole *console, GUI *owner );
     };
 };

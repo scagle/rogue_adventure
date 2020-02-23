@@ -173,8 +173,8 @@ namespace cursed
     {
         int y_offset = 0;
         // Name Input
-        std::unique_ptr< InputGUI > name_input = 
-            std::make_unique< InputGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        std::unique_ptr< TextInputGUI > name_input = 
+            std::make_unique< TextInputGUI >( this, width/4, y_offset+=3, width/2, 3 );
         name_input->setText("\nName");
         gui->addChild( std::move( name_input ) );
 
@@ -504,6 +504,22 @@ namespace cursed
         GUI *current_focused_gui = gui_stack.top().first->getPressableChild( gui_stack.top().second );
 
         // Special Keys
+        if ( special_key == Options::getOptions().MENU_SELECT )
+        {
+            if ( current_focused_gui )
+            {
+                current_focused_gui->select();
+            }
+        }
+
+        if ( current_focused_gui )
+        {
+            if ( current_focused_gui->isFocusable() && current_focused_gui->isFocused() )
+            {            
+                return;
+            }
+        }
+
         if ( special_key == Options::getOptions().MENU )
         {
             if ( escapable || gui_stack.size() > 1 )
@@ -511,37 +527,17 @@ namespace cursed
                 popGUI(); 
             }
         }
-        else if ( special_key == Options::getOptions().MENU_SELECT )
-        {
-            if ( current_focused_gui )
-            {
-                switch ( current_focused_gui->getType() )
-                {
-                    case GUIType::BUTTON:
-                        static_cast< ButtonGUI* >( current_focused_gui )->press();
-                        break;
-                    case GUIType::INPUT:
-                        static_cast< InputGUI* >( current_focused_gui )->toggleFocus();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
 
-        // Regular Keys
         if ( current_focused_gui )
         {
-            if ( current_focused_gui->getType() != GUIType::INPUT || static_cast< InputGUI* >( current_focused_gui )->isFocused() == false )
+            // Regular Keys
+            if ( regular_key == Options::getOptions().MENU_DOWN )
             {
-                if ( regular_key == Options::getOptions().MENU_DOWN )
-                {
-                    moveFocus( 1 );
-                }
-                if ( regular_key == Options::getOptions().MENU_UP )
-                {
-                    moveFocus( -1 );
-                }
+                moveFocus( 1 );
+            }
+            if ( regular_key == Options::getOptions().MENU_UP )
+            {
+                moveFocus( -1 );
             }
         }
     }

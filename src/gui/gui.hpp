@@ -36,23 +36,27 @@ namespace cursed
 
         virtual void setTitle(std::string title) final { this->title = title; }
         virtual std::string getTitle() final { return this->title; }
+        virtual Bound& getBound() { return this->bound; }
 
         virtual void addChild( std::unique_ptr< GUI > child ) final { this->children.push_back( std::move( child ) ); }
         virtual GUI* getChild( int index ) final { return ( children.size() > index ) ? children[index].get() : nullptr; }
         virtual GUI* getFirstChild() { return ( children.size() > 0 ) ? children[0].get() : nullptr; }
         virtual GUI* getPressableChild( int index );
 
+
         // Code smelly functions
+        virtual void select() { }
         virtual bool isTextable() { return false; }
         virtual bool isPressable() { return false; }
-        virtual bool isInputable() { return false; }
+        virtual bool isFocusable() { return false; }
         virtual GUIType getType() { return GUIType::BASE; }
+        virtual bool isFocused() { return false; }
 
 //      virtual void updateInput();
 
 //      virtual bool grabNextChild( std::pair< GUI*, int >* focus, int new_index) final;
 
-        virtual void update();
+        virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
         virtual void render( TCODConsole *console, bool is_parent, GUI* focused_gui );
     };
 
@@ -62,11 +66,13 @@ namespace cursed
         TextGUI( Menu *menu, int x, int y, int width, int height );
         virtual ~TextGUI() { }
 
+        virtual void select() { }
         virtual GUIType getType() { return GUIType::TEXT; }
+        virtual bool isFocused() { return false; }
 
         virtual bool isTextable() { return true; }
 
-        virtual void update();
+        virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
         virtual void render( TCODConsole *console, bool is_parent, GUI* focused_gui );
     };
 
@@ -76,29 +82,54 @@ namespace cursed
         ButtonGUI( Menu *menu, int x, int y, int width, int height );
         virtual ~ButtonGUI() { }
 
+        virtual void select();
         virtual GUIType getType() { return GUIType::BUTTON; }
-        virtual void press();
+        virtual bool isFocused() { return false; }
 
         virtual bool isTextable() { return true; }
-        virtual bool isPressable() { return true; };
+        virtual bool isPressable() { return true; }
 
-        virtual void update();
+        virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
         virtual void render( TCODConsole *console, bool is_parent, GUI* focused_gui );
     };
 
-    class InputGUI : public GUI, public Textable, public Pressable, public Focusable
+    class SliderGUI : public GUI, public Textable, public Pressable, public Focusable
     {
         public:
-        InputGUI( Menu *menu, int x, int y, int width, int height );
-        virtual ~InputGUI() { }
+        SliderGUI( Menu *menu, int x, int y, int width, int height );
+        virtual ~SliderGUI() { }
 
-        virtual GUIType getType() { return GUIType::INPUT; }
+        virtual void select();
+        virtual GUIType getType() { return GUIType::SLIDER; }
+        virtual bool isFocused() { return Focusable::isFocused(); }
 
         virtual bool isTextable() { return true; }
-        virtual bool isPressable() { return true; };
-        virtual bool isInputable() { return true; }
+        virtual bool isPressable() { return true; }
+        virtual bool isFocusable() { return true; }
 
-        virtual void update();
+        virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
         virtual void render( TCODConsole *console, bool is_parent, GUI* focused_gui );
+        void renderFocused( TCODConsole *console );
+    };
+
+    class TextInputGUI : public GUI, public Textable, public Pressable, public Focusable
+    {
+        std::string input_string = "";
+
+        public:
+        TextInputGUI( Menu *menu, int x, int y, int width, int height );
+        virtual ~TextInputGUI() { }
+
+        virtual void select();
+        virtual GUIType getType() { return GUIType::SLIDER; }
+        virtual bool isFocused() { return Focusable::isFocused(); }
+
+        virtual bool isTextable() { return true; }
+        virtual bool isPressable() { return true; }
+        virtual bool isFocusable() { return true; }
+
+        virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
+        virtual void render( TCODConsole *console, bool is_parent, GUI* focused_gui );
+        void renderFocused( TCODConsole *console );
     };
 };

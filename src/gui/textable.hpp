@@ -1,5 +1,10 @@
 #pragma once
 
+namespace cursed
+{
+    class GUI;
+};
+
 #include <string>
 #include <libtcod/libtcod.hpp>
 
@@ -17,5 +22,8 @@ namespace cursed
         virtual void setAlignment( TCOD_alignment_t alignment ) { this->alignment = alignment; }
         virtual std::string getText() { return this->text; }
         virtual TCOD_alignment_t getAlignment() final { return this->alignment; }
+
+        void update( GUI *owner );
+        void render( TCODConsole *console, GUI *owner );
     };
 };
