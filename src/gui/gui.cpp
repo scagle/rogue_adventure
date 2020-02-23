@@ -69,7 +69,32 @@ namespace cursed
 
     void TextInputGUI::update( TCOD_key_t &key, TCOD_mouse_t &mouse )
     {
-                
+        TCOD_keycode_t special_key = key.vk;
+        int regular_key = key.c;
+
+        // Special Keys
+//      if ( special_key == Options::getOptions().MENU ||
+//           special_key == Options::getOptions().MENU_SELECT )
+//      {
+//          escaped = true;
+//      }
+
+        // Regular Keys
+        if ( regular_key != 0 )
+        {
+            if ( regular_key == 8 )
+            {
+                if ( ! input_text.empty())
+                {
+                    input_text.pop_back();
+                }
+            }
+            else if ( regular_key >= 33 && regular_key <= 126 ) 
+            {
+                input_text.append( 1, regular_key );
+            }
+        }
+//      escaped = false;
     }
 
     void TextGUI::render( TCODConsole *console, bool is_parent, GUI* focused_gui )
@@ -139,7 +164,7 @@ namespace cursed
         }
         else
         {
-            Textable::render( console, this );
+            Textable::render( console, this, input_text );
         }
     }
 
@@ -174,6 +199,10 @@ namespace cursed
         console->setDefaultBackground( TCODColor::darkGrey );
         console->rect( bound.x, bound.y, bound.w, bound.h, true, TCOD_BKGND_SET );
         console->setDefaultBackground( old_color );
+
+        Bound cbound = bound.getCentered();
+        console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
+            TCOD_BKGND_NONE, TCOD_CENTER, input_text.c_str() );
     }
 
     GUI* GUI::getPressableChild( int child )

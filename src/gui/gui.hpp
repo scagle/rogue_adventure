@@ -114,7 +114,7 @@ namespace cursed
 
     class TextInputGUI : public GUI, public Textable, public Pressable, public Focusable
     {
-        std::string input_string = "";
+        std::string input_text = "";
 
         public:
         TextInputGUI( Menu *menu, int x, int y, int width, int height );

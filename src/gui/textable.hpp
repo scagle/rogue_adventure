@@ -24,6 +24,6 @@ namespace cursed
         virtual TCOD_alignment_t getAlignment() final { return this->alignment; }
 
         void update( GUI *owner );
-        void render( TCODConsole *console, GUI *owner );
+        void render( TCODConsole *console, GUI *owner, std::string overwrite="" );
     };
 };

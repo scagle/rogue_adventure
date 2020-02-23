@@ -516,6 +516,7 @@ namespace cursed
         {
             if ( current_focused_gui->isFocusable() && current_focused_gui->isFocused() )
             {            
+                current_focused_gui->update( key, mouse );
                 return;
             }
         }
@@ -540,6 +541,7 @@ namespace cursed
                 moveFocus( -1 );
             }
         }
+
     }
 
     void Menu::switchCurrentMenu( Menu *menu )

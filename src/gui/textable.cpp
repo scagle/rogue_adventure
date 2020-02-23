@@ -18,11 +18,19 @@ namespace cursed
         
     }
     
-    void Textable::render( TCODConsole *console, GUI *owner )
+    void Textable::render( TCODConsole *console, GUI *owner,  std::string overwrite )
     {
         Bound &bound = owner->getBound();
         Bound cbound = bound.getCentered();
-        console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
-            TCOD_BKGND_NONE, TCOD_CENTER, getText().c_str() );
+        if (overwrite == "")
+        {
+            console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
+                TCOD_BKGND_NONE, TCOD_CENTER, getText().c_str() );
+        }
+        else
+        {
+            console->printRectEx( cbound.x, cbound.y, cbound.w, cbound.h, 
+                TCOD_BKGND_NONE, TCOD_CENTER, overwrite.c_str() );
+        }
     }
 };
