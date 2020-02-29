@@ -220,7 +220,6 @@ namespace cursed
 
     void SliderGUI::renderNotFocused( TCODConsole *console )
     {
-        TCODColor old_color = console->getDefaultBackground();
         if ( slider_type == SliderType::RANGE )
         {
             console->setDefaultBackground( TCODColor::darkBlue );
@@ -232,7 +231,6 @@ namespace cursed
         console->printRectEx( cbound.x, cbound.y+2, cbound.w, cbound.h, 
             TCOD_BKGND_NONE, TCOD_CENTER, std::to_string(input_value).c_str() );
     }
-
 
     void TextInputGUI::renderFocused( TCODConsole *console )
     {

@@ -76,20 +76,6 @@ namespace cursed
         // Start out in AgreeMenu
         spawnAgreeMenu();
 
-        // Character Creation
-        std::unique_ptr< Actor > unique_player = 
-            std::make_unique< Actor >( this, 40, 25, '@', "player", TCODColor::white );
-        unique_player->destructible = std::make_unique< PlayerDestructible >( 30, 2, 
-            true, "your cadaver" );
-        unique_player->attacker = std::make_unique< Attacker >( 5 );
-        unique_player->ai = std::make_unique< PlayerAI >();
-        unique_player->pickable = nullptr;
-        unique_player->inventory = std::make_unique< Inventory >( 26 );
-        this->player = unique_player.get();
-
-        // Create Player Camera 
-        camera.loadCamera( 80, 60, player ); // Load camera / follow player
-
         // World Creation
         world.createWorld( 0x7FFFFFFF );
         current_area = world.getArea();
@@ -98,7 +84,13 @@ namespace cursed
 //      resource_handler.loadResources();         // initialize ResourceHandler
 //      current_area = resource_handler.getArea(0); // load map 0
 
-        current_area->add( CREATURES, std::move( unique_player ) );
+        // Character Creation
+        createMainCharacter("player");
+
+        // Create Player Camera 
+        camera.loadCamera( 80, 60, player ); // Load camera / follow player
+
+
     }
 
     void Engine::initMenus()
@@ -123,6 +115,20 @@ namespace cursed
 
     }
 
+    void Engine::createMainCharacter( std::string name )
+    {
+        std::unique_ptr< Actor > unique_player = 
+            std::make_unique< Actor >( this, 40, 25, '@', name.c_str(), TCODColor::white );
+        unique_player->destructible = std::make_unique< PlayerDestructible >( 30, 2, 
+            true, "your cadaver" );
+        unique_player->attacker = std::make_unique< Attacker >( 5 );
+        unique_player->ai = std::make_unique< PlayerAI >();
+        unique_player->pickable = nullptr;
+        unique_player->inventory = std::make_unique< Inventory >( 26 );
+        this->player = unique_player.get();
+
+        current_area->add( CREATURES, std::move( unique_player ) );
+    }
     void Engine::spawnAgreeMenu()
     {
         Menu::switchCurrentMenu( agree_menu.get() );

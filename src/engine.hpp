@@ -44,6 +44,7 @@ namespace cursed
 
         void init();
         void initMenus();
+        void createMainCharacter( std::string name );
         void load();
         void save();
 

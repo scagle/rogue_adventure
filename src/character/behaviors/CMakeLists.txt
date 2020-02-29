@@ -2,6 +2,8 @@
 set(BEHAVIORS_SOURCES 
     ${CMAKE_CURRENT_SOURCE_DIR}/ai.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ai.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/attributes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/attributes.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/attacker.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/attacker.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/destructible.cpp

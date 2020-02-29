@@ -43,7 +43,6 @@ namespace cursed
         virtual GUI* getFirstChild() { return ( children.size() > 0 ) ? children[0].get() : nullptr; }
         virtual GUI* getPressableChild( int index );
 
-
         // Code smelly functions
         virtual void select() { }
         virtual bool isTextable() { return false; }
