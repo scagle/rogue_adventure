@@ -16,6 +16,7 @@ namespace cursed
         private:        
         GUI *target = nullptr; 
         MenuAction action = MenuAction::NOTHING; 
+        std::vector< GUI* > requirements;
         bool enabled = true; // If button is not disabled
         TCODColor selected_color = TCODColor::lightPurple;
 
@@ -25,9 +26,11 @@ namespace cursed
 
         virtual GUI* getTarget() { return this->target; } 
         virtual MenuAction getAction() { return this->action; } 
+        virtual std::vector< GUI* >& getRequirements() { return this->requirements; } 
         virtual TCODColor getSelectedColor() { return TCODColor::lightPurple; }
         virtual void setTarget( GUI *target ) { this->target = target; } 
         virtual void setAction( MenuAction action ) { this->action = action; } 
+        virtual void addRequirement( GUI* gui ) { this->requirements.push_back( gui ); } 
 
         virtual bool isPressable() { return this->enabled; } 
 

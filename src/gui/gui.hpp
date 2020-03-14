@@ -50,6 +50,7 @@ namespace cursed
         virtual bool isFocusable() { return false; }
         virtual GUIType getType() { return GUIType::BASE; }
         virtual bool isFocused() { return false; }
+        virtual bool isSatisfied() { return true; }
 
 //      virtual void updateInput();
 
@@ -143,6 +144,7 @@ namespace cursed
         virtual bool isTextable() { return true; }
         virtual bool isPressable() { return true; }
         virtual bool isFocusable() { return true; }
+        virtual bool isSatisfied() { return (input_text == "") ? false : true; }
 
         virtual void update( TCOD_key_t &key, TCOD_mouse_t &mouse );
         virtual void render( TCODConsole *console, bool is_parent, GUI* focused_gui );

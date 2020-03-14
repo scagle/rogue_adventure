@@ -13,7 +13,7 @@ namespace cursed
         protected:
         int x, y;
         int width, height;
-        TCODColor fg = TCODColor::white;
+        TCODColor fg = TCODColor::yellow;
         TCODColor bg = TCODColor::black;
         std::unique_ptr< TCODConsole > viewport;
 //      bool updated = false; // Flag used to signal screen refresh

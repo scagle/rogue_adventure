@@ -220,6 +220,7 @@ namespace cursed
 
     void SliderGUI::renderNotFocused( TCODConsole *console )
     {
+        TCODColor old_color = console->getDefaultBackground();
         if ( slider_type == SliderType::RANGE )
         {
             console->setDefaultBackground( TCODColor::darkBlue );
@@ -268,7 +269,25 @@ namespace cursed
 
     void ButtonGUI::select()
     {
-        menu->action( this, getAction() );
+        if ( getRequirements().empty() )
+        {
+            menu->action( this, getAction() );
+        }
+        else
+        {
+            bool satisfied = true;
+            for ( auto* gui : getRequirements() )
+            {
+                if ( ! gui->isSatisfied() )
+                {
+                    satisfied = false;
+                }
+            }
+            if ( satisfied )
+            {
+                menu->action( this, getAction() );
+            }
+        }
     }
 
     void SliderGUI::select()

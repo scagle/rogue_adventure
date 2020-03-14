@@ -91,6 +91,8 @@ namespace cursed
 
         void initMainMenu( GUI *parent );
         void initNewCharacter( GUI *parent );
+        void initSpecialTraits( GUI *parent );
+        void initWorldSettings( GUI *parent );
 
         virtual void init();
         virtual void listen( ButtonEvent event ); // Listen for events

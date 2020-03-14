@@ -129,6 +129,7 @@ namespace cursed
 
         current_area->add( CREATURES, std::move( unique_player ) );
     }
+
     void Engine::spawnAgreeMenu()
     {
         Menu::switchCurrentMenu( agree_menu.get() );
@@ -154,6 +155,7 @@ namespace cursed
 //      temp_state = game_state;
 //      game_state = temp;
     }
+
     void Engine::setState( GameStatus state )
     {
         // Handle special cases 
@@ -197,6 +199,7 @@ namespace cursed
         }
         return false;
     }
+
     void Engine::sendToBack( ContainerType type, Actor &actor )
     {
         current_area->moveToAt( type, &actor, current_area, current_area, 0 );
@@ -251,8 +254,7 @@ namespace cursed
         return false;
     }
 
-    Actor* Engine::getClosestActor( int x, int y, float range,  
-        bool player_included )
+    Actor* Engine::getClosestActor( int x, int y, float range, bool player_included )
     {
         Actor *closest_actor = nullptr;
         float best_distance = 1000000; // Ridiculously high distance

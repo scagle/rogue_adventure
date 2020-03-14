@@ -107,24 +107,24 @@ namespace cursed
         }
     }
 
-    void AgreeMenu::initAgreeMenu( GUI *gui )
+    void AgreeMenu::initAgreeMenu( GUI *parent )
     {
         int y_offset = 0;
         // Content
         std::unique_ptr< TextGUI > text = 
             std::make_unique< TextGUI >( this, 1, 1, width-3, height - 5 );
         text->setText("This is my game it is so great I love everything about it ommmmmgooooshhhhh it is so good this message is such a substantial long message that I hope the text will wrap many many many many times before ending. I need you to agree with me. HERES_A_REALLY_LONG_WORD_I_WANT_TO_SEE_GET_WRAPPED_SOMEHOW_IDK_IF_THIS_WILL_WORK_AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-        gui->addChild( std::move( text ) );
+        parent->addChild( std::move( text ) );
         
         // Agree Button
         std::unique_ptr< ButtonGUI > agree = 
             std::make_unique< ButtonGUI >( this, width/4, height-3, width/2, 3 );
         agree->setText("\nAgree");
         agree->setAction( MenuAction::MAIN_MENU );
-        gui->addChild( std::move( agree ) );
+        parent->addChild( std::move( agree ) );
     }
 
-    void MainMenu::initMainMenu( GUI *gui )
+    void MainMenu::initMainMenu( GUI *parent )
     {
         int y_offset = 0;
         // New Button
@@ -135,14 +135,14 @@ namespace cursed
         character->setTarget( character.get() );
         character->setAction( MenuAction::PUSH );
         initNewCharacter( character.get() );
-        gui->addChild( std::move( character ) );
+        parent->addChild( std::move( character ) );
 
         // Continue Button
         std::unique_ptr< ButtonGUI > resume = 
             std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
         resume->setText("\nContinue");
         resume->setAction( MenuAction::RESUME );
-        gui->addChild( std::move( resume ) );
+        parent->addChild( std::move( resume ) );
 
         // Load Button
         std::unique_ptr< ButtonGUI > load = 
@@ -152,7 +152,7 @@ namespace cursed
         load->setTarget( load.get() );
         load->setAction( MenuAction::PUSH );
         //initSaveLoad( load.get() );
-        gui->addChild( std::move( load ) );
+        parent->addChild( std::move( load ) );
 
         // Settings
         std::unique_ptr< ButtonGUI > settings = 
@@ -162,53 +162,122 @@ namespace cursed
         settings->setTarget( settings.get() );
         settings->setAction( MenuAction::PUSH );
         //initSettings( settings.get() );
-        gui->addChild( std::move( settings ) );
+        parent->addChild( std::move( settings ) );
 
         // Exit
         std::unique_ptr< ButtonGUI > exit = 
             std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
         exit->setText("\nExit Game");
         exit->setAction( MenuAction::EXIT );
-        gui->addChild( std::move( exit ) );
+        parent->addChild( std::move( exit ) );
     }
 
-    void MainMenu::initNewCharacter( GUI *gui )
+    void MainMenu::initNewCharacter( GUI *parent )
     {
         int y_offset = 0;
+        GUI* requirement_1 = nullptr;  // Requirement for continue
         // Name Input
         std::unique_ptr< TextInputGUI > name_input = 
             std::make_unique< TextInputGUI >( this, width/4, y_offset+=3, width/2, 3 );
         name_input->setText("\nName");
-        gui->addChild( std::move( name_input ) );
+        requirement_1 = name_input.get();
+        parent->addChild( std::move( name_input ) );
 
         // Strength Input
         std::unique_ptr< SliderGUI > str_input = 
             std::make_unique< SliderGUI >( this, width/4, y_offset+=3, width/2, 3 );
         str_input->setText("\nStrength");
-        gui->addChild( std::move( str_input ) );
+        parent->addChild( std::move( str_input ) );
 
         // Dexterity Input
         std::unique_ptr< SliderGUI > dex_input = 
             std::make_unique< SliderGUI >( this, width/4, y_offset+=3, width/2, 3 );
         dex_input->setText("\nDexterity");
-        gui->addChild( std::move( dex_input ) );
+        parent->addChild( std::move( dex_input ) );
 
         // Wisdom Input
         std::unique_ptr< SliderGUI > wis_input = 
             std::make_unique< SliderGUI >( this, width/4, y_offset+=3, width/2, 3 );
         wis_input->setText("\nWisdom");
-        gui->addChild( std::move( wis_input ) );
+        parent->addChild( std::move( wis_input ) );
+
+        // Continue button
+        std::unique_ptr< ButtonGUI > cont = 
+            std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        cont->setText("\nContinue");
+        cont->setTitle("Special Traits");
+        cont->setTarget( cont.get() );
+        cont->setAction( MenuAction::PUSH );
+        cont->addRequirement( requirement_1 );
+        initSpecialTraits( cont.get() );
+        parent->addChild( std::move( cont ) );
 
         // Back button
         std::unique_ptr< ButtonGUI > back = 
             std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
         back->setText("\nBack");
         back->setAction( MenuAction::POP );
-        gui->addChild( std::move( back ) );
+        parent->addChild( std::move( back ) );
 
     }
 
-    void GameMenu::initGameMenu( GUI *gui )
+    void MainMenu::initSpecialTraits( GUI *parent )
+    {
+        int y_offset = 0;
+        GUI* requirement_1 = nullptr;  // Requirement for continue
+
+        // Name Input
+        std::unique_ptr< TextInputGUI > name_input = 
+            std::make_unique< TextInputGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        name_input->setText("\nName");
+        requirement_1 = name_input.get();
+        parent->addChild( std::move( name_input ) );
+
+        // Continue button
+        std::unique_ptr< ButtonGUI > cont = 
+            std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        cont->setText("\nContinue");
+        cont->setTitle("World Settings");
+        cont->setTarget( cont.get() );
+        cont->setAction( MenuAction::PUSH );
+        cont->addRequirement( requirement_1 );
+        initWorldSettings( cont.get() );
+        parent->addChild( std::move( cont ) );
+
+
+        // Back button
+        std::unique_ptr< ButtonGUI > back = 
+            std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        back->setText("\nBack");
+        back->setAction( MenuAction::POP );
+        parent->addChild( std::move( back ) );
+    }
+
+    void MainMenu::initWorldSettings( GUI *parent )
+    {
+        int y_offset = 0;
+        // Name Input
+        std::unique_ptr< TextInputGUI > name_input = 
+            std::make_unique< TextInputGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        name_input->setText("\nWorld Name");
+        parent->addChild( std::move( name_input ) );
+
+        // Start Button
+        std::unique_ptr< ButtonGUI > start = 
+            std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        start->setText("\nStart");
+        start->setAction( MenuAction::RESUME );
+        parent->addChild( std::move( start ) );
+
+        // Back button
+        std::unique_ptr< ButtonGUI > back = 
+            std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
+        back->setText("\nBack");
+        back->setAction( MenuAction::POP );
+        parent->addChild( std::move( back ) );
+    }
+
+    void GameMenu::initGameMenu( GUI *parent )
     {
         int y_offset = 0;
         // Resume Button
@@ -216,7 +285,7 @@ namespace cursed
             std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
         resume->setText("\nResume");
         resume->setAction( MenuAction::RESUME );
-        gui->addChild( std::move( resume ) );
+        parent->addChild( std::move( resume ) );
 
         // Save / Load Button
         std::unique_ptr< ButtonGUI > saveload = 
@@ -225,7 +294,7 @@ namespace cursed
         saveload->setTarget( saveload.get() );
         saveload->setAction( MenuAction::PUSH );
         initSaveLoad( saveload.get() );
-        gui->addChild( std::move( saveload ) );
+        parent->addChild( std::move( saveload ) );
 
         // Settings
         std::unique_ptr< ButtonGUI > settings = 
@@ -234,17 +303,17 @@ namespace cursed
         settings->setTarget( settings.get() );
         settings->setAction( MenuAction::PUSH );
         initSettings( settings.get() );
-        gui->addChild( std::move( settings ) );
+        parent->addChild( std::move( settings ) );
 
         // Exit
         std::unique_ptr< ButtonGUI > exit = 
             std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
         exit->setText("\nExit To Main Menu");
         exit->setAction( MenuAction::MAIN_MENU );
-        gui->addChild( std::move( exit ) );
+        parent->addChild( std::move( exit ) );
     }
 
-    void GameMenu::initSaveLoad( GUI *gui )
+    void GameMenu::initSaveLoad( GUI *parent )
     {
         int y_offset = 0;
         // Save 
@@ -254,7 +323,7 @@ namespace cursed
         save->setTarget( save.get() );
         save->setAction( MenuAction::PUSH );
         initSave( save.get() );
-        gui->addChild( std::move( save ) );
+        parent->addChild( std::move( save ) );
 
         // Load 
         std::unique_ptr< ButtonGUI > load = 
@@ -263,10 +332,10 @@ namespace cursed
         load->setTarget( load.get() );
         load->setAction( MenuAction::PUSH );
         initLoad( load.get() );
-        gui->addChild( std::move( load ) );
+        parent->addChild( std::move( load ) );
     }
 
-    void GameMenu::initSave( GUI *gui )
+    void GameMenu::initSave( GUI *parent )
     {
         int y_offset = 0;
         for ( int i = 0; i < 10; i++ )
@@ -276,11 +345,11 @@ namespace cursed
                 std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
             save->setText("\nSave " + std::to_string( i+1 ));
             save->setAction( MenuAction::SAVE );
-            gui->addChild( std::move( save ) );
+            parent->addChild( std::move( save ) );
         }
     }
 
-    void GameMenu::initLoad( GUI *gui )
+    void GameMenu::initLoad( GUI *parent )
     {
         int y_offset = 0;
         for ( int i = 0; i < 10; i++ )
@@ -290,11 +359,11 @@ namespace cursed
                 std::make_unique< ButtonGUI >( this, width/4, y_offset+=3, width/2, 3 );
             load->setText("\nLoad " + std::to_string( i+1 ));
             load->setAction( MenuAction::LOAD );
-            gui->addChild( std::move( load ) );
+            parent->addChild( std::move( load ) );
         }
     }
     
-    void GameMenu::initSettings( GUI *gui )
+    void GameMenu::initSettings( GUI *parent )
     {
         int y_offset = 0;
         // Game Settings
@@ -304,7 +373,7 @@ namespace cursed
         game->setTarget( game.get() );
         game->setAction( MenuAction::PUSH );
         initGameSettings( game.get() );
-        gui->addChild( std::move( game ) );
+        parent->addChild( std::move( game ) );
 
         // World Settings
         std::unique_ptr< ButtonGUI > world = 
@@ -313,7 +382,7 @@ namespace cursed
         world->setTarget( world.get() );
         world->setAction( MenuAction::PUSH );
         initWorldSettings( world.get() );
-        gui->addChild( std::move( world ) );
+        parent->addChild( std::move( world ) );
 
         // Content Settings
         std::unique_ptr< ButtonGUI > content = 
@@ -322,7 +391,7 @@ namespace cursed
         content->setTarget( content.get() );
         content->setAction( MenuAction::PUSH );
         initContentSettings( content.get() );
-        gui->addChild( std::move( content ) );
+        parent->addChild( std::move( content ) );
     }
 
     void GameMenu::initGameSettings( GUI *parent )
