@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-namespace cursed
+namespace rogue_adventure
 {
     const int BAR_WIDTH = 20;
     const int MAX_MSG_SIZE = 50;

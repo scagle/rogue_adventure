@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class Actor;
 }
@@ -10,7 +10,7 @@ namespace cursed
 #include <vector>
 #include <memory>
 
-namespace cursed
+namespace rogue_adventure
 {
     class Inventory : public ContainerComponent
     {

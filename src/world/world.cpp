@@ -4,7 +4,7 @@
 
 #include "../enums/entry_point.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
     Zone* World::current_zone = nullptr;

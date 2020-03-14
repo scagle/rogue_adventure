@@ -3,7 +3,7 @@
 #include "menu.hpp"
 #include "../options.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
 
@@ -276,13 +276,14 @@ namespace cursed
         else
         {
             bool satisfied = true;
-            for ( auto* gui : getRequirements() )
-            {
-                if ( ! gui->isSatisfied() )
-                {
-                    satisfied = false;
-                }
-            }
+            //// NOTE: Disabled for now, since there's absolutely no warning, and it's annoying
+            // for ( auto* gui : getRequirements() )
+            // {
+            //     if ( ! gui->isSatisfied() )
+            //     {
+            //         satisfied = false;
+            //     }
+            // }
             if ( satisfied )
             {
                 menu->action( this, getAction() );

@@ -8,7 +8,7 @@
 #include <libtcod/libtcod.hpp>
 #include <math.h>
 
-namespace cursed
+namespace rogue_adventure
 {
     bool Actor::attemptMove( int dx, int dy, Area &map )
     {

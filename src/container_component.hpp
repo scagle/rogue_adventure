@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class Actor;
 };
@@ -12,7 +12,7 @@ namespace cursed
 #include <vector>
 #include <unordered_map>
 
-namespace cursed
+namespace rogue_adventure
 {
     const int INFINITE = 0; // Infinite slots in inventory TODO
 

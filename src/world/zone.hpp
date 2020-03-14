@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class Camera;
 };
@@ -11,7 +11,7 @@ namespace cursed
 
 #include <memory>
 
-namespace cursed
+namespace rogue_adventure
 {
     class Zone : public Area 
     {

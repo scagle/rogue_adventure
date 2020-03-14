@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     enum class GUIType
     {

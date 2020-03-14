@@ -9,7 +9,7 @@
 #include <utility>
 #include <array>
 
-namespace cursed
+namespace rogue_adventure
 {
     class World
     {

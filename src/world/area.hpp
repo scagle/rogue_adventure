@@ -1,5 +1,5 @@
 #pragma once
-namespace cursed
+namespace rogue_adventure
 {
     class Tile;
     class Camera;
@@ -9,7 +9,7 @@ namespace cursed
 #include "../container_component.hpp"
 //#include "../datatypes/tile.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     // Area is an in-game area where player roams about 
     class Area : public ContainerComponent

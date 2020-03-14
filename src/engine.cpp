@@ -19,7 +19,7 @@
 
 #include <algorithm>
 
-namespace cursed
+namespace rogue_adventure
 {
     extern Engine engine;
 
@@ -54,7 +54,7 @@ namespace cursed
         this->game_state = STARTUP;
         this->map_visibility = 12;
 
-        TCODConsole::initRoot( screen_width, screen_height, "Cursed Adventure", false );
+        TCODConsole::initRoot( screen_width, screen_height, "Rogue Adventure", false );
         init();
 
     }
@@ -73,8 +73,8 @@ namespace cursed
         // Initialize Menus
         initMenus(); 
 
-        // Start out in AgreeMenu
-        spawnAgreeMenu();
+        // Start out in MainMenu
+        spawnMainMenu();
 
         // World Creation
         world.createWorld( 0x7FFFFFFF );

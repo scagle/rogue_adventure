@@ -4,7 +4,7 @@
 #include <chrono>
 #include <thread>
 
-cursed::Engine engine( 80, 80 );
+rogue_adventure::Engine engine( 80, 80 );
 
 int main() 
 {

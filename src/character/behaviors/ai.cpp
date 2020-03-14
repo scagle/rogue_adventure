@@ -11,7 +11,7 @@
 #include <libtcod/libtcod.hpp>
 #include <math.h>
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
     // How many turns it will track after losing sight

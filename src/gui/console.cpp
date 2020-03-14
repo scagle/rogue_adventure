@@ -7,7 +7,7 @@
 #include <cstdarg>
 #include <fmt/format.h>
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
 

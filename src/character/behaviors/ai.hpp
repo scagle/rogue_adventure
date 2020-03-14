@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class Actor;
 }
@@ -8,7 +8,7 @@ namespace cursed
 #include <libtcod/libtcod.hpp>
 #include <memory>
 
-namespace cursed
+namespace rogue_adventure
 {
     // Constants
     const int INVENTORY_WIDTH = 50;     // width of console

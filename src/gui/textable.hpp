@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class GUI;
 };
@@ -8,7 +8,7 @@ namespace cursed
 #include <string>
 #include <libtcod/libtcod.hpp>
 
-namespace cursed
+namespace rogue_adventure
 {
     class Textable
     {

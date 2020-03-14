@@ -1,13 +1,13 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class Actor;
 }
 
 #include <string>
 
-namespace cursed
+namespace rogue_adventure
 {
     class Destructible
     {

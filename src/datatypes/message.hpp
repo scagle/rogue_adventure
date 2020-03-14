@@ -3,7 +3,7 @@
 #include <libtcod/libtcod.hpp>
 #include <string>
 
-namespace cursed
+namespace rogue_adventure
 {
     struct Message
     {

@@ -8,7 +8,7 @@
 #include <sstream>
 #include <glob.h>
 
-namespace cursed
+namespace rogue_adventure
 {
     bool ResourceHandler::loadResources()
     {

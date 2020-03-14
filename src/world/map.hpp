@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class Actor;
     class Tile;
@@ -12,7 +12,7 @@ namespace cursed
 #include <libtcod/libtcod.hpp>
 #include <vector>
 
-namespace cursed
+namespace rogue_adventure
 {
     // Map is a turn-based, field of vision environment where battles take place
     class Map : public Area

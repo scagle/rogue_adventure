@@ -6,7 +6,7 @@
 
 #include <libtcod/libtcod.hpp>
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
 

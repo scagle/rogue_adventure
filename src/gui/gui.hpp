@@ -1,6 +1,6 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class Menu;
 };
@@ -19,7 +19,7 @@ namespace cursed
 #include <utility>
 #include <vector>
 
-namespace cursed
+namespace rogue_adventure
 {
     class GUI
     {

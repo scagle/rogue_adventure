@@ -6,7 +6,7 @@
 #include <vector> 
 #include <algorithm> 
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
     std::vector< ContainerComponent* > ContainerComponent::containers;

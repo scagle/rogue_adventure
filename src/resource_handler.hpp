@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace cursed
+namespace rogue_adventure
 {
     class ResourceHandler
     {

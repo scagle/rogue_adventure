@@ -8,7 +8,7 @@
 #include <stack>
 #include <stdlib.h>
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
     Menu *Menu::current_focused_menu;

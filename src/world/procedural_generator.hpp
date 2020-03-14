@@ -1,5 +1,5 @@
 #pragma once
-namespace cursed
+namespace rogue_adventure
 {
     class Zone;
 };
@@ -9,7 +9,7 @@ namespace cursed
 #include <memory>
 #include <utility>
 
-namespace cursed
+namespace rogue_adventure
 {
     class ProceduralGenerator
     {

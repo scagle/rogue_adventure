@@ -4,7 +4,7 @@
 #include "../../engine.hpp"
 #include "../../enums/game_status.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
 

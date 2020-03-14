@@ -3,7 +3,7 @@
 #include "../actor.hpp"
 #include "../../engine.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
 

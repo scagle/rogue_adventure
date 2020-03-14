@@ -1,6 +1,6 @@
 #include "attributes.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
 

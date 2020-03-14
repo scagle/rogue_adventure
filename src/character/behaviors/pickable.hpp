@@ -1,11 +1,11 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class Actor;
 };
 
-namespace cursed
+namespace rogue_adventure
 {
     class Pickable
     {

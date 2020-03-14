@@ -12,7 +12,7 @@
 
 #include <stack>
 
-namespace cursed
+namespace rogue_adventure
 {
     class Menu : public TCODConsole
     {

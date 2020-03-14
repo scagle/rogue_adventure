@@ -2,7 +2,7 @@
 
 #include <libtcod/libtcod.hpp>
 
-namespace cursed
+namespace rogue_adventure
 {
     const TCODColor dirt_wall(128, 80, 60);
     const TCODColor dirt_floor(60, 40, 10);

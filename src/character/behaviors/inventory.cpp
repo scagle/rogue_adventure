@@ -3,7 +3,7 @@
 #include "../actor.hpp"
 #include "../../enums/container_type.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
 
@@ -18,7 +18,7 @@ namespace cursed
 //#include "container.hpp"
 //#include "../actor.hpp"
 //
-//namespace cursed
+//namespace rogue_adventure
 //{
 //    // Static Declaration
 //

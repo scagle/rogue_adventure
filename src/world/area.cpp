@@ -4,7 +4,7 @@
 #include "../character/actor.hpp"
 #include "../datatypes/tile.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
 

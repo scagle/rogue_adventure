@@ -2,7 +2,7 @@
 
 #include "gui.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     // Static Declaration
 

@@ -4,7 +4,7 @@
 #include "../datatypes/tile.hpp"
 #include "../camera.hpp"
 
-namespace cursed
+namespace rogue_adventure
 {
     Map::Map( std::unique_ptr< std::array< std::array< Tile, 100 >, 100 > > tiles, 
         int width, int height )

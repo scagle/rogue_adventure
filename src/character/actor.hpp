@@ -1,5 +1,5 @@
 #pragma once
-namespace cursed
+namespace rogue_adventure
 {
     class Area;
     class Engine;
@@ -17,7 +17,7 @@ namespace cursed
 #include <string>
 #include <libtcod/libtcod.hpp>
 
-namespace cursed
+namespace rogue_adventure
 {
     class Actor
     {

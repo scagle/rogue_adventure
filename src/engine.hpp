@@ -14,7 +14,7 @@
 #include <vector>
 #include <utility>
 
-namespace cursed
+namespace rogue_adventure
 {
     class Engine
     {

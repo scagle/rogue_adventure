@@ -1,13 +1,13 @@
 #pragma once
 
-namespace cursed
+namespace rogue_adventure
 {
     class GUI;
 };
 
 #include <libtcod/libtcod.hpp>
 
-namespace cursed
+namespace rogue_adventure
 {
     class Focusable
     {

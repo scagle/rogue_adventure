@@ -28,19 +28,19 @@ add_subdirectory(datatypes)
 add_subdirectory(enums)
 add_subdirectory(gui) # Consoles
 
-add_executable(cursed ${BASE_SOURCES} ${WORLD_SOURCES} ${CHARACTER_SOURCES} ${BEHAVIOR_SOURCES} ${DATATYPES_SOURCES} ${ENUMS_SOURCES} ${GUI_SOURCES} ${INCLUDE_SOURCES})
+add_executable(rogue_adventure ${BASE_SOURCES} ${WORLD_SOURCES} ${CHARACTER_SOURCES} ${BEHAVIOR_SOURCES} ${DATATYPES_SOURCES} ${ENUMS_SOURCES} ${GUI_SOURCES} ${INCLUDE_SOURCES})
 
-target_include_directories(cursed PUBLIC ${LIBTCOD_INCLUDE_DIRS})
+target_include_directories(rogue_adventure PUBLIC ${LIBTCOD_INCLUDE_DIRS})
 
-target_link_libraries(cursed fmt::fmt)
-target_link_libraries(cursed ${LIBTCOD_LIBRARIES})
-target_link_libraries(cursed Threads::Threads)
+target_link_libraries(rogue_adventure fmt::fmt)
+target_link_libraries(rogue_adventure ${LIBTCOD_LIBRARIES})
+target_link_libraries(rogue_adventure Threads::Threads)
 
 
 message("Copying binary to <project>/build")
-add_custom_command(TARGET cursed
+add_custom_command(TARGET rogue_adventure
     POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:cursed> "${CMAKE_BINARY_DIR}/"
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:rogue_adventure> "${CMAKE_BINARY_DIR}/"
 )
 
 message("Copying font to <project>/build/terminal.png")
